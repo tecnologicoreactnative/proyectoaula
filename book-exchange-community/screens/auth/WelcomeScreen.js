@@ -78,6 +78,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#A5A692',
         fontSize: 20,
-        fontWeight: '600',
+        fontWeight: '600'
     }
 });
