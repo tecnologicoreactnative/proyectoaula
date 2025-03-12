@@ -5,12 +5,15 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false)
 
     const contextValue = {
         isAuthenticated,
         setIsAuthenticated,
         user,
-        setUser
+        setUser,
+        loading,
+        setLoading
     };
 
     return (

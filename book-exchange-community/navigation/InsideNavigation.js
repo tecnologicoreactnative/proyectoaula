@@ -16,6 +16,19 @@ export default function InsideNavigation() {
         <Tab.Navigator
             id="bottom-tab"
             initialRouteName="Home"
+            screenOptions={{
+                tabBarStyle: {
+                    marginHorizontal: 10,
+                    marginVertical: 15,
+                    borderRadius: 30,
+                    backgroundColor: '#025E73',
+                },
+                tabBarActiveTintColor: '#F2A71B',
+                tabBarInactiveTintColor: '#BFB78F',
+                headerShown: false,
+                tabBarHideOnKeyboard: true,
+
+            }}
         >
             <Tab.Screen name="Home" component={Home}
                         options={{
@@ -45,7 +58,7 @@ export default function InsideNavigation() {
                         options={{
                             title: 'Mensajes',
                             tabBarIcon: ({color, size}) => (
-                                <VectorIcons name="envelope" color={color} size={size}/>
+                                <VectorIcons name="wechat" color={color} size={size}/>
                             ),
                         }}
             />
