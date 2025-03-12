@@ -1,11 +1,14 @@
 import React from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text} from 'react-native';
+import {useLogout} from "../services/ServiceAuth";
+import CompButton from "../components/CompButton";
 
 export default function ProfileScreen() {
+    const logout = useLogout();
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>Profile Screen</Text>
-            <Button title={'logout'}>Logout</Button>
+            <CompButton text={'logout'} onPress={logout}/>
         </View>
     );
 }

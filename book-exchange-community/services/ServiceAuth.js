@@ -1,12 +1,21 @@
-import {createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-import app from '../lib/Firebase';
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    sendEmailVerification,
+    signOut
+} from 'firebase/auth';
+
+import {auth} from '../lib/Firebase';
 import {AppContext} from "../context/AppContext";
 import {Alert} from "react-native";
 import {useContext} from "react";
 import {createRecord} from "./ServiceFireStore";
 
+
+
+
 export function useLogin() {
-    const auth = getAuth(app);
     const {setIsAuthenticated, setUser} = useContext(AppContext);
 
     return async (email, password) => {
@@ -41,8 +50,21 @@ export function useLogin() {
     };
 }
 
+export function useLogout() {
+    const {setIsAuthenticated, setUser} = useContext(AppContext);
+
+    return async () => {
+        try {
+            await signOut(auth);
+            setIsAuthenticated(false);
+            setUser(null);
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        }
+    };
+}
+
 export function useRegister() {
-    const auth = getAuth(app);
     return async (email, password) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -56,7 +78,8 @@ export function useRegister() {
                 "notifications": [null]
             };
             try {
-                const response = await createRecord({collectionName: 'users', data: {user}});
+                await createRecord({collectionName: 'users', data: {user}});
+                await sendEmailVerification(userCredential.user);
                 Alert.alert('Registro exitoso', 'Usuario creado correctamente');
                 return true;
             } catch (e) {
@@ -73,40 +96,13 @@ export function useRegister() {
     }
 }
 
-
-/*
-* export default function RegisterScreen({ navigation }) {
-
-    const auth = getAuth(app);
-
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
-
-    const handleRegisterWithEmail = () => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(async (userCredential) => {
-                const user = {
-                    "userId": userCredential.user.uid,
-                    "userInfo": userCredential.user.providerData,
-                    "location": {"lat": null, "lng": null},
-                    "booksListed": [null],
-                    "booksRequested": [null],
-                    "chats": [null],
-                    "notifications": [null]
-                };
-                try {
-                    const response = await createRecord({collectionName: 'users', data: {user}});
-                    Alert.alert('Registro exitoso', 'Usuario creado correctamente');
-                    navigation.navigate('Login');
-                } catch (e) {
-                    Alert.alert('Error', 'No se pudo crear el usuario');
-                }
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage);
-                Alert.alert('Error', errorMessage);
-            });
+export function useRecoverPassword() {
+    return async (email) => {
+        try {
+            await sendPasswordResetEmail(auth, email);
+            Alert.alert('Correo enviado', 'Se ha enviado un correo de recuperación');
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        }
     }
-* */
+}

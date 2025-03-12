@@ -13,15 +13,17 @@ export default function AppNavigation() {
     console.log(isAuthenticated)
     return (
         <Tab.Navigator
+            id="app-tab"
             screenOptions={{
                 headerShown: false,
                 tabBarShowLabel: false,
                 tabBarStyle: {display: "none"}
-            }}>
+            }}
+        >
             {isAuthenticated ?
                 <Tab.Screen name="Inside" component={InsideNavigation}/> :
-                <Tab.Screen name="Auth" component={AuthNavigation}/>}
-
+                <Tab.Screen name="Auth" component={AuthNavigation}/>
+            }
         </Tab.Navigator>
     );
 }
