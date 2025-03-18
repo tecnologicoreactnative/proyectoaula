@@ -55,13 +55,14 @@ const styles = {
     searcher: {
         flex: 1,
         padding: 0,
-        margin: 0,
+        margin: 10,
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
     },
     list: {
         flex: 5,
+        margin: 10,
         alignItems: 'center',
         justifyContent: 'center',
         alignContent: 'center',

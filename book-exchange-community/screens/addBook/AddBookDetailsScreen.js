@@ -105,25 +105,27 @@ export default function AddBookDetailsScreen({navigation}) {
             </View>
             <Text style={{color: '#F2A71B', fontSize: 24, fontWeight: 'bold', textAlign: 'center', margin: 10}}>Estado
                 del Libro</Text>
-            <ScrollView style={{flex: 1, padding: 10, overflow: 'scroll', width: '100%'}}>
+            <ScrollView style={{flex: 1, padding: 10, margin: 10, overflow: 'scroll', width: '100%'}}>
                 <View style={{flex: 1}}>
                     <Checkbox.Item label="Tiene anotaciones o marcas" status={annotations ? "checked" : "unchecked"}
-                                   onPress={() => setAnnotations(!annotations)}/>
+                                   onPress={() => setAnnotations(!annotations)} color={'#F2A71B'}/>
                     <Checkbox.Item label="Tiene texto subrayado o resaltado"
                                    status={highlights ? "checked" : "unchecked"}
-                                   onPress={() => setHighlights(!highlights)}/>
+                                   onPress={() => setHighlights(!highlights)} color={'#F2A71B'}/>
                     <Checkbox.Item label="Daño en la portada" status={coverDamage ? "checked" : "unchecked"}
-                                   onPress={() => setCoverDamage(!coverDamage)}/>
+                                   onPress={() => setCoverDamage(!coverDamage)} color={'#F2A71B'}/>
                     <Checkbox.Item label="Daño en las páginas" status={pageDamage ? "checked" : "unchecked"}
-                                   onPress={() => setPageDamage(!pageDamage)}/>
+                                   onPress={() => setPageDamage(!pageDamage)} color={'#F2A71B'}/>
                     <Checkbox.Item label="Daño en el encuadernado" status={bindingDamage ? "checked" : "unchecked"}
-                                   onPress={() => setBindingDamage(!bindingDamage)}/>
+                                   onPress={() => setBindingDamage(!bindingDamage)} color={'#F2A71B'}/>
                     <TextInput
                         label="Descripción (opcional)"
                         value={description}
                         onChangeText={setDescription}
                         mode="outlined"
                         multiline
+                        cursorColor={'#F2A71B'}
+                        activeOutlineColor={'#F2A71B'}
                         style={{marginBottom: 10}}
                     />
                 </View>
@@ -141,5 +143,5 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         alignContent: 'center',
-    },
+    }
 }

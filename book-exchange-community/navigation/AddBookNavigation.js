@@ -23,6 +23,7 @@ export default function AddBookNavigation() {
                 },
                 headerTitleAlign: 'center',
             }}
+
         >
             <Stack.Screen
                 name="AddBookScreen"
