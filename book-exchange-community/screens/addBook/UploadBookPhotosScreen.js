@@ -83,21 +83,23 @@ export default function UploadPhotoScreen({navigation}) {
 
     return (
         <View style={{flex: 1, padding: 20, justifyContent: "center", alignItems: "center"}}>
-            <ScrollView horizontal>
+            <ScrollView vertical>
                 {images.map((img, index) => (
-                    <Image key={index} source={{uri: img}} style={{width: 100, height: 100, margin: 5}}/>
+                    <Image key={index} source={{uri: img}} style={{width: 200, height: 250, margin: 5}}/>
                 ))}
             </ScrollView>
-            <Button mode="contained" onPress={() => pickImage(true)} style={{marginBottom: 10}}
-                    disabled={images.length >= 3}>
-                Tomar Foto
-            </Button>
-            <Button mode="contained" onPress={() => pickImage(false)} style={{marginBottom: 10}}
-                    disabled={images.length >= 3}>
-                Seleccionar de Galería
-            </Button>
+            <View style={{width: '100%', flexDirection: "row", justifyContent: "center"}}>
+                <Button mode="contained" onPress={() => pickImage(true)} style={{flex: 1, margin: 10}}
+                        disabled={images.length >= 3} buttonColor={'#025E73'} textColor={'#F2A71B'}>
+                    Tomar Foto
+                </Button>
+                <Button mode="contained" onPress={() => pickImage(false)} style={{flex: 1, margin: 10}}
+                        disabled={images.length >= 3} buttonColor={'#025E73'} textColor={'#F2A71B'}>
+                    Galería
+                </Button>
+            </View>
             <Button mode="contained" loading={uploading} disabled={uploading || images.length < 3}
-                    onPress={handleUpload}>
+                    onPress={handleUpload} buttonColor={'#025E73'} textColor={'#F2A71B'}>
                 Subir Imágenes
             </Button>
         </View>
