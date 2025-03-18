@@ -1,24 +1,37 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp, getApps } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import {initializeApp, getApp, getApps} from "firebase/app";
+import {getFirestore} from 'firebase/firestore';
+import {getReactNativePersistence, initializeAuth, getAuth} from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDzct6E6k5WNZcPI7nVgCjIVjW4cECMqDA",
-    authDomain: "book-exchange-community.firebaseapp.com",
-    projectId: "book-exchange-community",
-    storageBucket: "book-exchange-community.firebasestorage.app",
-    messagingSenderId: "580338402808",
-    appId: "1:580338402808:web:17129d17aef1ce4c3e820d",
-    measurementId: "G-53MX302MRQ"
+    apiKey: process.env.EXPO_PUBLIC_FIREBASE_KEY,
+    authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
+let app;
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApp();
+}
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-export default app;
+let auth;
+try {
+    auth = initializeAuth(app, {
+        persistence: getReactNativePersistence(AsyncStorage)
+    });
+}
+catch (error) {
+    auth = getAuth(app);
+}
 
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+export { auth, app, db, storage};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 
 
 import LoginScreen from "../screens/auth/LoginScreen";
@@ -11,26 +11,39 @@ const Stack = createStackNavigator();
 
 export default function AuthNavigation() {
     return (
-        <Stack.Navigator  initialRouteName="Welcome">
+        <Stack.Navigator
+            id="auth-stack"
+            initialRouteName="Welcome"
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#025E73',
+                },
+                headerTintColor: '#F2A71B',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerTitleAlign: 'center'
+            }}
+        >
             <Stack.Screen
                 name="Welcome"
                 component={WelcomeScreen}
-                options={{ headerShown: false }}
+                options={{headerShown: false}}
             />
             <Stack.Screen
                 name="Login"
                 component={LoginScreen}
-                options={{ title: 'Iniciar Sesión'}}
+                options={{title: 'Iniciar Sesión'}}
             />
             <Stack.Screen
                 name="Register"
                 component={RegisterScreen}
-                options={{ title: 'Registrarse' }}
+                options={{title: 'Registrarse'}}
             />
             <Stack.Screen
                 name="Recover"
                 component={RecoverPasswordScreen}
-                options={{ title: 'Recuperar Contraseña' }}
+                options={{title: 'Recuperar Contraseña'}}
             />
         </Stack.Navigator>
     );
