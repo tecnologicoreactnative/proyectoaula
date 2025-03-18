@@ -14,6 +14,16 @@ export default function AuthNavigation() {
         <Stack.Navigator
             id="auth-stack"
             initialRouteName="Welcome"
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#025E73',
+                },
+                headerTintColor: '#F2A71B',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerTitleAlign: 'center'
+            }}
         >
             <Stack.Screen
                 name="Welcome"

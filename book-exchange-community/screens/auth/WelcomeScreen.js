@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         paddingVertical: 0,
     },
     button: {
-        backgroundColor: '#011F26',
+        backgroundColor: '#025E73',
         paddingVertical: 10,
         paddingHorizontal: 20,
         width: '50%',
@@ -76,8 +76,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     buttonText: {
-        color: '#A5A692',
+        color: '#F2A71B',
         fontSize: 20,
-        fontWeight: '600'
+        fontWeight: '800'
+
     }
 });
