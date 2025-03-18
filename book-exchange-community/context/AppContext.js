@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react";
+import {useWindowDimensions} from "react-native";
 
 export const AppContext = createContext();
 
@@ -6,6 +7,8 @@ export const AppProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false)
+    const [widthApp, setWidthApp] = useState(useWindowDimensions().width);
+    const [heightApp, setHeightApp] = useState(useWindowDimensions().height);
 
     const contextValue = {
         isAuthenticated,
@@ -13,7 +16,9 @@ export const AppProvider = ({ children }) => {
         user,
         setUser,
         loading,
-        setLoading
+        setLoading,
+        widthApp,
+        heightApp,
     };
 
     return (

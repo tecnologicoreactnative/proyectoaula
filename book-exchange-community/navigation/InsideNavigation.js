@@ -6,7 +6,7 @@ import Home from '../screens/HomeScreen';
 import Profile from '../screens/ProfileScreen';
 import Messages from '../screens/MessagesScreen';
 import Search from '../screens/SearchScreen';
-import AddBook from '../screens/AddBookScreen';
+import AddBookNavigation from "./AddBookNavigation";
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +14,7 @@ export default function InsideNavigation() {
 
     return (
         <Tab.Navigator
-            id="bottom-tab"
+            id="inside-tab"
             initialRouteName="Home"
             screenOptions={{
                 tabBarStyle: {
@@ -27,6 +27,7 @@ export default function InsideNavigation() {
                 tabBarInactiveTintColor: '#BFB78F',
                 headerShown: false,
                 tabBarHideOnKeyboard: true,
+                style: {borderRadius: 30, backgroundColor: '#025E73'},
 
             }}
         >
@@ -46,7 +47,7 @@ export default function InsideNavigation() {
                             ),
                         }}
             />
-            <Tab.Screen name="AddBook" component={AddBook}
+            <Tab.Screen name="AddBook" component={AddBookNavigation}
                         options={{
                             title: 'Agregar Libro',
                             tabBarIcon: ({color, size}) => (

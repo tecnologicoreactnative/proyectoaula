@@ -13,22 +13,19 @@ const styles = StyleSheet.create({
     button: {
         padding: 10,
         margin: 5,
-        color: '#fff',
         backgroundColor: '#025E73',
         borderRadius: 50,
-        shadowColor: "#000",
-        shadowOpacity: 0.25,
-        shadowOffset: {
-            width: 20,
-            height: 2
-        },
+        shadowColor: '#000',
+        shadowOffset: { width: 10, height: 10 },
+        shadowOpacity: 0.5,
+        shadowRadius: 4,
+        elevation: 8,
         width: '100%',
         alignItems: 'center',
-        verticalAlign: 'center'
     },
     text: {
         color: '#F2A71B',
-        fontWeight: 'bold',
+        fontWeight: '800',
         fontSize: 20,
     }
 });

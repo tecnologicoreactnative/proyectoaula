@@ -21,6 +21,7 @@ export default function LoginScreen({ navigation }) {
     const handleLogin = async () => {
         setLoading(true);
         await login(email, password);
+
         setLoading(false);
     };
 

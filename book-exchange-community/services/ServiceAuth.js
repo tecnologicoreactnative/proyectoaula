@@ -12,9 +12,6 @@ import {Alert} from "react-native";
 import {useContext} from "react";
 import {createRecord} from "./ServiceFireStore";
 
-
-
-
 export function useLogin() {
     const {setIsAuthenticated, setUser} = useContext(AppContext);
 
