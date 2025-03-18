@@ -12,7 +12,7 @@ export default function CompButton({ text, onPress }) {
 const styles = StyleSheet.create({
     button: {
         padding: 10,
-        margin: 5,
+        margin: 10,
         backgroundColor: '#025E73',
         borderRadius: 50,
         shadowColor: '#000',
