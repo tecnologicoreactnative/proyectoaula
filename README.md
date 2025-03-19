@@ -47,4 +47,13 @@ Detalles del proyecto pendientes de agregar.
 - **Notificaciones**
 - **Recordatorios**
 
+- Para la ejecución se debe crear el archivo de variables de entorno con la siguiente estructura (Creación de aplicación en Firebase):
+EXPO_PUBLIC_FIREBASE_KEY={key}
+EXPO_PUBLIC_FIREBASE_APP_ID={key}
+EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID={key}
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID={key}
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET={key}
+EXPO_PUBLIC_FIREBASE_PROJECT_ID={key}
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN={key}
+
  Información: https://brass-bison-03a.notion.site/TDEA-2025-1-Mobile-APP-Swap-books-19ec35d6911280b98330dd76bd8eb78b?pvs=4 
