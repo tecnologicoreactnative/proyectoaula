@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "book-exchange-community",
+    "slug": "book-exchange-community",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/Logo.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/Swap-Books.gif",
+      "resizeMode": "contain",
+      "backgroundColor": "#011F26"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/Logo.png",
+        "backgroundColor": "#011F26"
+      },
+      "package": "com.anonymous.bookexchangecommunity"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
