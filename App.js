@@ -1,62 +1,95 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { View, ActivityIndicator } from "react-native";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import React, { useContext, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { auth } from './firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import MenuScreen from "./screens/MenuScreen";
 
-const Stack = createStackNavigator();
+import NavegacionStack from './Navegacion/AuthStack'; 
+import AuthStack from './Navegacion/NavegacionStack'; 
+import { ProveedorAuth, AuthContexto } from './contextos/AuthContexto';
 
-const Navigation = () => {
-  const { user, loading } = useAuth();
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+const Rutas = () => {
+  const { usuario } = useContext(AuthContexto);
+  return usuario ? <NavegacionStack /> : <AuthStack />;
+};
+
+
+const Registro = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log('Usuario registrado:', userCredential.user);
+      })
+      .catch((error) => console.log('Error:', error.message));
+  };
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!user ? (
-        <>
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen 
-            name="RegisterScreen" 
-            component={RegisterScreen}
-            options={{ 
-              headerShown: true,
-              headerBackTitle: "",
-              title: "Registro"
-            }}
-          />
-        </>
-      ) : (
-        <Stack.Screen 
-          name="MenuScreen" 
-          component={MenuScreen}
-          options={{ 
-            headerShown: true,
-            title: "Menú",
-            headerLeft: null 
-          }}
-        />
-      )}
-    </Stack.Navigator>
+    <View style={styles.container}>
+      <Text style={styles.title}>¡Registrarse!</Text>
+      <Text style={styles.label}>Email:</Text>
+      <TextInput
+        onChangeText={setEmail}
+        style={styles.input}
+        placeholder="Ingresa tu email"
+        keyboardType="email-address"
+      />
+      <Text style={styles.label}>Contraseña:</Text>
+      <TextInput
+        secureTextEntry
+        onChangeText={setPassword}
+        style={styles.input}
+        placeholder="Ingresa tu contraseña"
+      />
+      <Button title="Registrarse" onPress={handleSignUp} color="#6200EE" />
+    </View>
   );
 };
 
+
 export default function App() {
   return (
-    <AuthProvider>
+    <ProveedorAuth>
       <NavigationContainer>
-        <Navigation />
+        <Rutas />
+        { }
+        <Registro />
       </NavigationContainer>
-    </AuthProvider>
+    </ProveedorAuth>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#F5F5F5',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#6200EE',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 5,
+    color: '#333333',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 15,
+    backgroundColor: '#FFFFFF',
+  },
+});
