@@ -1,0 +1,12 @@
+{
+    "esquemas": [
+        {
+            "id": "1",
+            "name": "Charkit",
+            "icon": "https://www.npmjs.com/package/react-native-chart-kit",
+        },{
+            "chibi":"https://www.dictionary.com/e/wp-content/uploads/2018/03/chibi-300x300.jpg",
+            "Chibi":"https://miro.medium.com/v2/resize:fit:720/format:webp/1*Yl2ZPhSTaue67SqLKeF9Nw.jpeg",
+        }
+    ]
+}
