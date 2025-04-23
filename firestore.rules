@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Función helper para verificar si es admin
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.email == "adminrestaurante@gmail.com";
+    }
+    
+    // Reglas para la colección de platos
+    match /platos/{platoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Reglas para la colección de pedidos
+    match /pedidos/{pedidoId} {
+      allow read: if request.auth != null && (
+        isAdmin() || 
+        resource.data.usuarioId == request.auth.uid
+      );
+      allow create: if request.auth != null;
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+    
+    // Reglas para la colección de usuarios
+    match /usuarios/{userId} {
+      allow read: if request.auth != null && 
+        (userId == request.auth.uid || isAdmin());
+      allow write: if request.auth != null && 
+        (userId == request.auth.uid || isAdmin());
+    }
+  }
+} 
