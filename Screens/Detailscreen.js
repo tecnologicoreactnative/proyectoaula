@@ -8,7 +8,7 @@ const Detailscreen = () => {
  </View>
  );
 };
-export default Detailscreen;*/
+export default Detailscreen;
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import { Card, Button } from 'react-native-paper';
@@ -34,7 +34,7 @@ const properties = [
   },
 ];
 
-const HomeScreen = ({ navigation }) => {
+const Detailescreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🏡 Encuentra tu Hogar Ideal</Text>
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default Detailescreen;*/
