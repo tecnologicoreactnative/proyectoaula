@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, TextInput, Button, Text, Alert } from 'react-native';
+import { View, TextInput, Button, Text, Alert,ScrollView } from 'react-native';
 import { auth } from '../services/firebaseConfig';
 import { getDatabase, ref, set, get } from 'firebase/database';
 import { AuthContext } from '../context/AutenticacionContext'; 
 
-const Citas = () => {
+const Citas = ({navigation}) => {
   const [id_Appointment, setid_Appointment] = useState('');
   const [id_Patient, setid_Patient] = useState('');
   const [id_Professional, setid_Professional] = useState('');
@@ -92,7 +92,9 @@ const handleSave = () => {
 
 
   return (
+  
     <View style={{ padding: 16 }}>
+      <ScrollView>
       <Text style={{ fontSize: 20, marginBottom: 16 }}>Registro de la cita</Text>
       
       <TextInput
@@ -196,13 +198,11 @@ const handleSave = () => {
         <Button title="Guardar Información" onPress={handleSave} />
       ) : (
         <Text style={{ marginBottom: 16 }}>Bienvenido de nuevo, {fullName}!</Text>
-      )}
-
-      
-
-     <Button title="Volver" onPress={() => navigation.navigate('Home')} color="#5bc0de" />
+      )}   
+     <Button title="Volver" onPress={() => navigation.navigate('Inicio')} color="#5bc0de" />
       <Button title="Ir a la agenda" onPress={() => navigation.navigate('Agendamiento')} color="blue" />
       <Button title="Cerrar sesión" onPress={logOut} color="#d9534f" />
+      </ScrollView>
     </View>
      
   );

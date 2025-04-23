@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, Button, Platform, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const Agendamiento = () => {
-    const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showTimePicker, setShowTimePicker] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedTime, setSelectedTime] = useState(null);
+const Cancelacion_Reprogramacion = () => {
+    const [id_Cancel_Reprogram, setid_Cancel_Reprogram] = useState(new Date());
+    const [id_Appointment, setid_Appointment] = useState(new Date());
+    const [TypeEvent, setTypeEvent] = useState();
+    const [Date_Event, setDate_Event] = useState();
+    const [isFirstTime, setIsFirstTime] = useState(true);
+
 
     const onChangeDate = (event, selected) => {
         setShowDatePicker(false);
@@ -111,4 +112,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Agendamiento;
+export default Cancelacion_Reprogramacion;

@@ -4,7 +4,7 @@ import { auth } from '../services/firebaseConfig';
 import { getDatabase, ref, set, get } from 'firebase/database';
 import { AuthContext } from '../context/AutenticacionContext'; 
 
-const PatientPortalScreen = () => {
+const PatientPortalScreen = ({navigation}) => {
   const [Name, setName] = useState('');
   const [Fullname, setFullName] = useState('');
   const [Typedocument, setTypeDocument] = useState('');
@@ -145,7 +145,7 @@ const PatientPortalScreen = () => {
 
       
 
-     <Button title="Volver" onPress={() => navigation.navigate('Home')} color="#5bc0de" />
+     <Button title="Volver" onPress={() => navigation.navigate('Inicio')} color="#5bc0de" />
       <Button title="Ir a la agenda" onPress={() => navigation.navigate('Agendamiento')} color="blue" />
       <Button title="Cerrar sesión" onPress={logOut} color="#d9534f" />
     </View>

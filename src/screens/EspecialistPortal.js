@@ -4,7 +4,7 @@ import { auth } from '../services/firebaseConfig';
 import { getDatabase, ref, set, get } from 'firebase/database';
 import { AuthContext } from '../context/AutenticacionContext'; 
 
-const EspecialistPortal = () => {
+const EspecialistPortal = ({navigation}) => {
   const [Name, setName] = useState('');
   const [Fullname, setFullName] = useState('');
   const [specialty, setspecialty] = useState('');

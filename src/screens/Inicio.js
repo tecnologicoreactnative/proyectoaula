@@ -37,17 +37,20 @@ const styles = StyleSheet.create({
     },
 });
 
-const Inicio = () => {
+const Inicio = ({navigation}) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Bienvenido a la Aplicación</Text>
            
            
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate ('EspecialistPortal')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate ('Login')}>
                 <Text style={styles.buttonText}>Iniciar sesión como Especialista</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}> onPress={()=> navigation.navigate ('Paciente')}
+            <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate ('Citas')}>
                 <Text style={styles.buttonText}>Iniciar sesión como Paciente</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate ('Cancelacion_Reprogramacion')}>
+                <Text style={styles.buttonText}>Iniciar sesión cancelar</Text>
             </TouchableOpacity>
         </View>
     );

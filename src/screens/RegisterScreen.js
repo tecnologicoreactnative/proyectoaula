@@ -6,6 +6,7 @@ import { auth } from '../services/firebaseConfig';
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const[role, setRole] = useState(''); 
 
   const handleRegister = () => {
     createUserWithEmailAndPassword(auth, email, password)
