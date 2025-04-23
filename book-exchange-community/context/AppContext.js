@@ -1,5 +1,6 @@
 import React, { createContext, useState } from "react";
 import {useWindowDimensions} from "react-native";
+import usePermissions from "../hooks/Permissions";
 
 export const AppContext = createContext();
 
@@ -9,6 +10,7 @@ export const AppProvider = ({ children }) => {
     const [loading, setLoading] = useState(false)
     const [widthApp, setWidthApp] = useState(useWindowDimensions().width);
     const [heightApp, setHeightApp] = useState(useWindowDimensions().height);
+    const {cameraPermission, galleryPermission, locationPermission} = usePermissions();
 
     const contextValue = {
         isAuthenticated,
@@ -19,6 +21,9 @@ export const AppProvider = ({ children }) => {
         setLoading,
         widthApp,
         heightApp,
+        cameraPermission,
+        galleryPermission,
+        locationPermission,
     };
 
     return (

@@ -1,5 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Carousel from 'react-native-reanimated-carousel';
 import {AppContext} from "../context/AppContext";
 import {getOwnBooks} from "../services/ServiceBooks";
@@ -10,7 +11,12 @@ export default function MyBooks() {
     const fetchBooks = async () => {
         setBooks(await getOwnBooks());
     };
-    fetchBooks();
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchBooks();
+        }));
+
 
     const {widthApp, heightApp} = useContext(AppContext);
 
@@ -59,7 +65,7 @@ export default function MyBooks() {
     });
 
 
-    if (books.length === 0) {
+    if (!books) {
         return (<Text style={styles.text}>No tienes libros</Text>);
     } else {
         return (

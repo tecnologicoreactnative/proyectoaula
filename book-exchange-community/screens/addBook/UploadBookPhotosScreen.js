@@ -6,26 +6,26 @@ import * as ImagePicker from "expo-image-picker";
 import {uploadImage} from "../../services/ServiceStorage";
 import usePermissions from "../../hooks/Permissions";
 import {AppContext} from "../../context/AppContext";
-import {updateBook} from "../../services/ServiceBooks"; // Importar el servicio de permisos
+import {updateBook} from "../../services/ServiceBooks";
 
 export default function UploadPhotoScreen({navigation}) {
     const route = useRoute();
     const {idBook} = route.params;
     const [images, setImages] = useState([]);
     const [uploading, setUploading] = useState(false);
-    const {cameraPermission, galleryPermission} = usePermissions();
-    const user = useContext(AppContext);
+    // const {cameraPermission, galleryPermission} = usePermissions();
+    const {user, cameraPermission, galleryPermission} = useContext(AppContext);
 
 
     const pickImage = async (fromCamera) => {
-        if (fromCamera && !cameraPermission) {
-            Alert.alert("Permiso denegado", "Se necesita acceso a la cámara para tomar fotos.");
-            return;
-        }
-        if (!fromCamera && !galleryPermission) {
-            Alert.alert("Permiso denegado", "Se necesita acceso a la galería para seleccionar fotos.");
-            return;
-        }
+        // if (fromCamera && !cameraPermission) {
+        //     Alert.alert("Permiso denegado", "Se necesita acceso a la cámara para tomar fotos.");
+        //     return;
+        // }
+        // if (!fromCamera && !galleryPermission) {
+        //     Alert.alert("Permiso denegado", "Se necesita acceso a la galería para seleccionar fotos.");
+        //     return;
+        // }
 
         let result;
 
@@ -53,24 +53,26 @@ export default function UploadPhotoScreen({navigation}) {
             Alert.alert("Error", "Debes subir al menos 3 fotos antes de continuar.");
             return;
         }
-
         setUploading(true);
-        const uploadedImages = [];
-        for (const image of images) {
-            const downloadURL = await uploadImage(image, (user.user.uid + '/' + 'idBook'));
-            if (downloadURL) {
-                uploadedImages.push(downloadURL);
-            }
-        }
+        // const uploadedImages = [];
+        // for (const image of images) {
+        //     const downloadURL = await uploadImage(image, (user.user.uid + '/' + 'idBook'));
+        //     console.log("Subiendo imágenes...");
+        //     console.log(downloadURL);
+        //     if (downloadURL) {
+        //         console.log("ingresó a subir la imagen");
+        //         uploadedImages.push(downloadURL);
+        //     }
+        // }
         setUploading(false);
 
-        if (uploadedImages.length === images.length) {
-            Alert.alert("Éxito", "Todas las imágenes han sido subidas correctamente.");
-            setImages([]);
-        }
+        // if (uploadedImages.length === images.length) {
+        //     Alert.alert("Éxito", "Todas las imágenes han sido subidas correctamente.");
+            // setImages([]);
+        //}
 
         const updateBookData = {
-            photos: uploadedImages,
+            // photos: uploadedImages,
             status: 'completed',
             available: true,
         }
