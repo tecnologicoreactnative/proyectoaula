@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, TextInput, Button, Text, Alert,ScrollView } from 'react-native';
 import { auth } from '../services/firebaseConfig';
-import { getDatabase, ref, set, get } from 'firebase/database';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { AuthContext } from '../context/AutenticacionContext'; 
 
 const Citas = ({navigation}) => {
@@ -63,7 +63,12 @@ const Citas = ({navigation}) => {
 const handleSave = () => {
     const appointmentId = id_Appointment;
     const db = getDatabase();
+
+
+
     set(ref(db, 'appointment/' + appointmentId), {
+
+
       id_Appointment,
       id_Patient,
       id_Professional,

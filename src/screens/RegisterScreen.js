@@ -1,27 +1,41 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../services/firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../services/firebaseConfig';
+import { Picker } from '@react-native-picker/picker';
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const[role, setRole] = useState(''); 
+  const [role, setRole] = useState('');
 
-  const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log('Registro exitoso:', userCredential.user);
-        alert('Registro exitoso');
-        navigation.navigate('Login');
-      })
-      .catch((error) => {
-        console.error('Error en el registro:', error);
-        alert('Error en el registro');
+  const handleRegister = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await setDoc(doc(db, 'users', user.uid), {
+        email: email,
+        role: role,
       });
+      alert('Registro exitoso');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error en el registro:', error);
+      if (error.code === 'auth/email-already-in-use') {
+        alert('El correo ya está registrado');
+      } else if (error.code === 'auth/invalid-email') {
+        alert('El correo no es válido');
+      } else if (error.code === 'auth/weak-password') {
+        alert('La contraseña es muy débil');
+      } else {
+        alert('Error en el registro. Intenta nuevamente');
+      }
+    
+    }
+
   };
 
-  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registrarse</Text>
@@ -42,7 +56,19 @@ const RegisterScreen = ({ navigation }) => {
         secureTextEntry
         placeholderTextColor="#274b6a"
       />
-      
+
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={role}
+          style={styles.picker}
+          onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
+        >
+          <Picker.Item label="Seleccionar Rol" value="" color="#274b6a" />
+          <Picker.Item label="Paciente" value="paciente" color="#274b6a" />
+          <Picker.Item label="Especialista" value="especialista" color="#274b6a" />
+        </Picker>
+      </View>
+
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
@@ -80,10 +106,22 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: '#274b6a',
   },
+  pickerContainer: {
+    width: '100%',
+    backgroundColor: '#f5f5f5',
+    borderColor: 'transparent',
+    borderRadius: 5,
+    marginBottom: 15,
+    color: '#274b6a',
+  },
+  picker: {
+    height: 50,
+    color: '#274b6a', // Asegúrate de que el texto del picker sea visible
+  },
   button: {
     backgroundColor: '#274b6a',
     borderRadius: 5,
-    paddingVertical: 6,
+    paddingVertical: 12,
     paddingHorizontal: 20,
     alignSelf: 'center',
     marginTop: 0,

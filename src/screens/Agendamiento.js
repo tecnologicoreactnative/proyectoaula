@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Platform, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 
 const Agendamiento = () => {
     const [date, setDate] = useState(new Date());
@@ -8,6 +9,37 @@ const Agendamiento = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
+    const [especialistaAsignado, setEspecialistaAsignado] = useState(null);
+    const [isLoadingEspecialistas, setIsLoadingEspecialistas] = useState(true);
+    const [errorEspecialistas, setErrorEspecialistas] = useState(null);
+
+    useEffect(() => {
+        const fetchEspecialistas = async () => {
+            const db = getFirestore();
+            const especialistasCollection = collection(db, 'EspecialistPortal');
+            try {
+                const querySnapshot = await getDocs(especialistasCollection);
+                const especialistasArray = [];
+                querySnapshot.forEach((doc) => {
+                    especialistasArray.push(doc.data());
+                });
+
+                if (especialistasArray.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * especialistasArray.length);
+                    setEspecialistaAsignado(especialistasArray[randomIndex]);
+                } else {
+                    setErrorEspecialistas('No hay especialistas disponibles.');
+                }
+            } catch (error) {
+                console.error('Error al obtener especialistas:', error);
+                setErrorEspecialistas('Error al cargar la información del especialista.');
+            } finally {
+                setIsLoadingEspecialistas(false);
+            }
+        };
+
+        fetchEspecialistas();
+    }, []);
 
     const onChangeDate = (event, selected) => {
         setShowDatePicker(false);
@@ -32,16 +64,32 @@ const Agendamiento = () => {
     };
 
     const confirmarCita = () => {
-        if (selectedDate && selectedTime) {
-            alert(`Cita agendada para el ${formatearFecha(selectedDate)} a las ${formatearHora(selectedTime)}`);
-        } else {
+        if (selectedDate && selectedTime && especialistaAsignado) {
+            alert(`Cita agendada para el ${formatearFecha(selectedDate)} a las ${formatearHora(selectedTime)} con ${especialistaAsignado.FullName}.`);
+        } else if (!selectedDate || !selectedTime) {
             alert('Por favor selecciona fecha y hora.');
+        } else if (!especialistaAsignado && !errorEspecialistas) {
+            alert('No se pudo asignar un especialista. Inténtalo de nuevo.');
+        } else if (errorEspecialistas) {
+            alert(errorEspecialistas);
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.titulo}>Selecciona tu cita</Text>
+
+            {isLoadingEspecialistas ? (
+                <Text>Cargando especialista...</Text>
+            ) : errorEspecialistas ? (
+                <Text style={styles.error}>{errorEspecialistas}</Text>
+            ) : especialistaAsignado ? (
+                <View style={styles.infoEspecialista}>
+                    <Text style={styles.subtitulo}>Tu especialista asignado es:</Text>
+                    <Text>{especialistaAsignado.FullName}</Text>
+                    <Text>Especialidad: {especialistaAsignado.specialty}</Text>
+                </View>
+            ) : null}
 
             <View style={styles.botonContainer}>
                 <Button title="Elegir Fecha" onPress={() => setShowDatePicker(true)} />
@@ -96,6 +144,13 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         textAlign: 'center',
     },
+    subtitulo: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginTop: 10,
+        marginBottom: 5,
+        textAlign: 'center',
+    },
     botonContainer: {
         marginVertical: 10,
         alignItems: 'center',
@@ -108,6 +163,18 @@ const styles = StyleSheet.create({
     confirmarContainer: {
         marginTop: 30,
         alignItems: 'center',
+    },
+    infoEspecialista: {
+        marginBottom: 20,
+        padding: 15,
+        backgroundColor: '#e0f7fa',
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    error: {
+        color: 'red',
+        marginTop: 10,
+        textAlign: 'center',
     },
 });
 

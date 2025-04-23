@@ -2,16 +2,29 @@ import React, { useState, useContext } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { AuthContext } from '../context/AutenticacionContext';
 
+
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useContext(AuthContext);
-
+  const [role, setRole] = useState('');
+  
+  
   const handleLogin = async() => {
     try {
-      await signIn(email, password);
+      await signIn(email, password, role);
+      if (email === 'admin@gmail.com' && password === 'admin123') {
+        navigation.navigate('Admin');
+        return;
+      }else if (role === 'paciente') {
+        navigation.navigate('PatientPortal');
+      } else if (role === 'especialista') {
+        navigation.navigate('SpecialistPortal');
+      } else {
+        Alert.alert('Error', 'Rol no válido');
+      }
     } catch (error) {
-      console.error('Error de inicio de sesión:', error);
+      console.error('Error de inicio de sesión:');
       Alert.alert('Error', error.message);
     }
   };
