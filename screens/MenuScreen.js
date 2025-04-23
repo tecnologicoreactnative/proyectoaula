@@ -1,96 +1,193 @@
-import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  Alert, 
-  StyleSheet, 
-  ScrollView,
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
   Image,
-  ActivityIndicator
-} from "react-native";
-import { useAuth } from "../context/AuthContext";
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  Alert
+} from 'react-native';
+import { usePlatos } from '../context/PlatosContext';
+import { usePedidos } from '../context/PedidosContext';
+import { useAuth } from '../context/AuthContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const MenuScreen = () => {
+  const { platos, loading, error, getPlatos } = usePlatos();
+  const { crearPedido } = usePedidos();
   const { logout } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedPlatos, setSelectedPlatos] = useState({});
+  const navigation = useNavigation();
 
-  const platosColombianos = [
-    {
-      id: 1,
-      nombre: "Bandeja Paisa",
-      descripcion: "Plato tradicional que incluye frijoles, arroz, chicharrón, carne molida, huevo frito, plátano maduro, aguacate y arepa.",
-      precio: "$25.000",
-      imagen: require('../assets/platos/bandejapaisa.jpg')
-    },
-    {
-      id: 2,
-      nombre: "Ajiaco Santafereño",
-      descripcion: "Sopa cremosa con tres tipos de papas, pollo, mazorca, crema y alcaparras, servida con arroz blanco.",
-      precio: "$22.000",
-      imagen: require('../assets/platos/ajiaco-santafereño.jpg')
-    },
-    {
-      id: 3,
-      nombre: "Sancocho de Gallina",
-      descripcion: "Sopa sustanciosa con gallina criolla, yuca, plátano, papa y verduras, acompañada de arroz y aguacate.",
-      precio: "$24.000",
-      imagen: require('../assets/platos/sancochogallina.jpg')
-    },
-    {
-      id: 4,
-      nombre: "Lechona Tolimense",
-      descripcion: "Cerdo relleno de arroz, arvejas y especias, cocido lentamente hasta quedar crujiente.",
-      precio: "$28.000",
-      imagen: require('../assets/platos/lechona.jpg')
-    },
-    {
-      id: 5,
-      nombre: "Cazuela de Mariscos",
-      descripcion: "Deliciosa combinación de mariscos en salsa cremosa de coco, servida con arroz y patacones.",
-      precio: "$32.000",
-      imagen: require('../assets/platos/cazuela-mariscos.jpg')
+  useEffect(() => {
+    getPlatos();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getPlatos();
+    setRefreshing(false);
+  };
+
+  const handleIncrement = (platoId) => {
+    setSelectedPlatos(prev => ({
+      ...prev,
+      [platoId]: (prev[platoId] || 0) + 1
+    }));
+  };
+
+  const handleDecrement = (platoId) => {
+    setSelectedPlatos(prev => ({
+      ...prev,
+      [platoId]: Math.max((prev[platoId] || 0) - 1, 0)
+    }));
+  };
+
+  const handlePedir = async () => {
+    const platosSeleccionados = Object.entries(selectedPlatos)
+      .filter(([_, cantidad]) => cantidad > 0)
+      .map(([platoId, cantidad]) => {
+        const plato = platos.find(p => p.id === platoId);
+        return {
+          id: platoId,
+          nombre: plato.nombre,
+          precio: parseFloat(plato.precio) * 1000,
+          cantidad
+        };
+      });
+
+    if (platosSeleccionados.length === 0) {
+      Alert.alert('Error', 'Debes seleccionar al menos un plato');
+      return;
     }
-  ];
 
-  const handleLogout = async () => {
     try {
-      await logout();
+      await crearPedido(platosSeleccionados);
+      Alert.alert('Éxito', 'Tu pedido ha sido creado correctamente');
+      setSelectedPlatos({});
+      navigation.navigate('Pedidos');
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      Alert.alert("Error", "No se pudo cerrar sesión. Inténtalo de nuevo.");
+      Alert.alert('Error', 'No se pudo crear el pedido. Inténtalo de nuevo.');
     }
   };
 
+  const formatPrice = (price) => {
+    const number = parseFloat(price) * 1000;
+    return number.toLocaleString('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).replace('COP', '$');
+  };
+
+  const renderPlatoItem = ({ item }) => {
+    const cantidad = selectedPlatos[item.id] || 0;
+
+    return (
+      <View style={styles.platoCard}>
+        <Image
+          source={{ uri: item.imagen }}
+          style={styles.platoImage}
+          resizeMode="cover"
+        />
+        <View style={styles.platoInfo}>
+          <Text style={styles.platoName}>{item.nombre || 'Sin nombre'}</Text>
+          <Text style={styles.platoDescription} numberOfLines={2}>
+            {item.descripcion || 'Sin descripción'}
+          </Text>
+          <Text style={styles.platoPrice}>{formatPrice(item.precio)}</Text>
+          <View style={styles.cantidadContainer}>
+            <TouchableOpacity 
+              style={styles.cantidadButton}
+              onPress={() => handleDecrement(item.id)}
+            >
+              <Ionicons name="remove" size={24} color="#007bff" />
+            </TouchableOpacity>
+            <Text style={styles.cantidadText}>{cantidad}</Text>
+            <TouchableOpacity 
+              style={styles.cantidadButton}
+              onPress={() => handleIncrement(item.id)}
+            >
+              <Ionicons name="add" size={24} color="#007bff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={getPlatos}>
+          <Text style={styles.retryButtonText}>Reintentar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const hasSelectedPlatos = Object.values(selectedPlatos).some(cantidad => cantidad > 0);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Platos Típicos Colombianos</Text>
-      
-      <ScrollView 
-        style={styles.scrollContainer}
+      <FlatList
+        data={platos}
+        renderItem={renderPlatoItem}
+        keyExtractor={(item) => String(item.id)}
+        contentContainerStyle={styles.platosList}
         showsVerticalScrollIndicator={false}
-      >
-        {platosColombianos.map((plato) => (
-          <View key={plato.id} style={styles.platoCard}>
-            <View style={styles.platoImageContainer}>
-              <Image
-                source={plato.imagen}
-                style={styles.platoImagen}
-                resizeMode="cover"
-              />
-            </View>
-            <View style={styles.platoInfo}>
-              <Text style={styles.platoNombre}>{plato.nombre}</Text>
-              <Text style={styles.platoDescripcion}>{plato.descripcion}</Text>
-              <Text style={styles.platoPrecio}>{plato.precio}</Text>
-            </View>
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#007bff"]}
+          />
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              No hay platos disponibles
+            </Text>
           </View>
-        ))}
-      </ScrollView>
-
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
-      </TouchableOpacity>
+        }
+      />
+      <View style={styles.actionButtonsContainer}>
+        {hasSelectedPlatos && (
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.pedirButton]}
+            onPress={handlePedir}
+          >
+            <Ionicons name="cart" size={30} color="#fff" />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => navigation.navigate('Pedidos')}
+        >
+          <Ionicons name="receipt-outline" size={30} color="#007bff" />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={logout}
+        >
+          <Ionicons name="log-out" size={30} color="#dc3545" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -98,75 +195,134 @@ const MenuScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 16
+    backgroundColor: '#f8f9fa',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 20,
-    textAlign: "center"
-  },
-  scrollContainer: {
+  centerContainer: {
     flex: 1,
-    marginBottom: 16
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  platosList: {
+    padding: 15,
   },
   platoCard: {
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    marginBottom: 16,
-    shadowColor: "#000",
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    marginBottom: 15,
+    overflow: 'hidden',
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    overflow: "hidden"
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e9ecef'
   },
-  platoImageContainer: {
-    position: 'relative',
+  platoImage: {
     width: '100%',
     height: 200,
   },
-  platoImagen: {
-    width: "100%",
-    height: 200,
-  },
   platoInfo: {
-    padding: 16
+    padding: 20,
   },
-  platoNombre: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8
-  },
-  platoDescripcion: {
-    fontSize: 14,
-    color: "#666",
+  platoName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#212529',
     marginBottom: 8,
-    lineHeight: 20
   },
-  platoPrecio: {
+  platoDescription: {
+    fontSize: 15,
+    color: '#6c757d',
+    marginBottom: 12,
+    lineHeight: 22,
+  },
+  platoPrice: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#007bff',
+    marginBottom: 12,
+  },
+  cantidadContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    padding: 8,
+  },
+  cantidadButton: {
+    padding: 8,
+  },
+  cantidadText: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginHorizontal: 16,
+    color: '#212529',
+  },
+  errorText: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#007bff"
+    color: '#dc3545',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  logoutButton: {
-    backgroundColor: "#d9534f",
+  retryButton: {
+    backgroundColor: '#007bff',
     paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  logoutButtonText: {
-    color: "white",
+  retryButtonText: {
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: '600',
+  },
+  emptyContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#6c757d',
+    textAlign: 'center',
+  },
+  actionButtonsContainer: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  actionButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e9ecef'
+  },
+  pedirButton: {
+    backgroundColor: '#28a745',
+    borderColor: '#28a745',
   }
 });
 

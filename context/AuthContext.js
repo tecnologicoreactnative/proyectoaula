@@ -13,6 +13,7 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const isValidEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -38,6 +39,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setUser(userCredential.user);
+      // Verificar si es admin
+      if (email.toLowerCase() === "adminrestaurante@gmail.com") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
     } catch (error) {
       if (error.code === "auth/user-not-found") {
         alert("Este correo no está registrado.");
@@ -68,6 +75,7 @@ export const AuthProvider = ({ children }) => {
         displayName: name 
       });
       setUser(userCredential.user);
+      setIsAdmin(false);
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         alert("Este correo ya está registrado.");
@@ -85,6 +93,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await signOut(auth);
       setUser(null);
+      setIsAdmin(false);
     } catch (error) {
       alert("Error al cerrar sesión. Inténtalo de nuevo.");
       throw error;
@@ -94,6 +103,11 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser && currentUser.email.toLowerCase() === "adminrestaurante@gmail.com") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
       setLoading(false);
     });
 
@@ -104,6 +118,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{
       user,
       loading,
+      isAdmin,
       login,
       register,
       logout
