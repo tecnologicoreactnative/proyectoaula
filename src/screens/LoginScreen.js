@@ -2,11 +2,15 @@ import React, { useState, useContext } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { AuthContext } from '../context/AutenticacionContext';
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useContext(AuthContext);
+<<<<<<< HEAD
   const [role, setRole] = useState('');
   
   
@@ -25,6 +29,14 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error de inicio de sesión:');
+=======
+
+  const handleLogin = async() => {
+    try {
+      await signIn(email, password);
+    } catch (error) {
+      console.error('Error de inicio de sesión:', error);
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
       Alert.alert('Error', error.message);
     }
   };

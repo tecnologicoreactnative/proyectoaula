@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+<<<<<<< HEAD
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../services/firebaseConfig';
 import { Picker } from '@react-native-picker/picker';
+=======
+import { auth } from '../services/firebaseConfig';
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+<<<<<<< HEAD
   const [role, setRole] = useState('');
 
   const handleRegister = async () => {
@@ -36,6 +41,23 @@ const RegisterScreen = ({ navigation }) => {
 
   };
 
+=======
+
+  const handleRegister = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log('Registro exitoso:', userCredential.user);
+        alert('Registro exitoso');
+        navigation.navigate('Login');
+      })
+      .catch((error) => {
+        console.error('Error en el registro:', error);
+        alert('Error en el registro');
+      });
+  };
+
+  
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registrarse</Text>
@@ -56,6 +78,7 @@ const RegisterScreen = ({ navigation }) => {
         secureTextEntry
         placeholderTextColor="#274b6a"
       />
+<<<<<<< HEAD
 
       <View style={styles.pickerContainer}>
         <Picker
@@ -69,6 +92,9 @@ const RegisterScreen = ({ navigation }) => {
         </Picker>
       </View>
 
+=======
+      
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
@@ -106,6 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: '#274b6a',
   },
+<<<<<<< HEAD
   pickerContainer: {
     width: '100%',
     backgroundColor: '#f5f5f5',
@@ -122,6 +149,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#274b6a',
     borderRadius: 5,
     paddingVertical: 12,
+=======
+  button: {
+    backgroundColor: '#274b6a',
+    borderRadius: 5,
+    paddingVertical: 6,
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
     paddingHorizontal: 20,
     alignSelf: 'center',
     marginTop: 0,
@@ -142,4 +175,8 @@ const styles = StyleSheet.create({
   },
 });
 
+<<<<<<< HEAD
 export default RegisterScreen;
+=======
+export default RegisterScreen;
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8

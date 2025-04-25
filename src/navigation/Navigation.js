@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import PatientPortalScreen from '../screens/PatientPortalScreen';
+<<<<<<< HEAD
 import Agendamiento from '../screens/Agendamiento';
 import Inicio from '../screens/Inicio';
 import Citas from '../screens/Citas';
@@ -11,12 +12,15 @@ import EspecialistPortal from '../screens/EspecialistPortal';
 import Cancelacion_Reprogramacion from '../screens/Cancelacion_Reprogramacion';
 import AdminScreen from '../screens/AdminScreen';
 
+=======
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
 
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
   return (
     <NavigationContainer>
+<<<<<<< HEAD
       <Stack.Navigator initialRouteName="Inicio">
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Principal' }}/>
         <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Registro' }}/>
@@ -31,6 +35,11 @@ const Navigation = () => {
         
         
         {/* Agrega más pantallas aquí */}
+=======
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Principal' }}/>
+        <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Registro' }}/>
+>>>>>>> 5e205e499d3bc3224f84638ebf3771bb48de7ae8
       </Stack.Navigator>
     </NavigationContainer>
   );
