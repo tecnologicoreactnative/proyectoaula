@@ -7,6 +7,7 @@ Esta es una aplicación móvil desarrollada con React Native para la gestión de
 - **Autenticación de Usuarios**
   - Registro y login de usuarios
   - Roles diferenciados (admin y cliente)
+  - Cuenta Admin: adminrestaurante@gmail.com contraseña: admin123
 
 - **Menú**
   - Visualización de platos disponibles
