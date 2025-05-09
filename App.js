@@ -1,24 +1,27 @@
-import React from "react";
+import React from 'react';
+import { Alert, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import Register from "./screens/Register";
-import Login from "./screens/Login";
-import DetailsScreen from "./screens/DetailsScreen";
-import HomeScreen from "./screens/HomeScreen";
+import MainStackNavigator from "./Navigation/MainStackNavigator";
+import { UsersProvider } from "./context/UsersContext";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-const Stack = createStackNavigator();
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Login" component={Login}/>
-        <Stack.Screen name="Home" component={HomeScreen}/>
-        <Stack.Screen name="Details" component={DetailsScreen}/>
-        
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <UsersProvider>
+        <NavigationContainer>
+          <SafeAreaView style={styles.container}>
+            <MainStackNavigator />
+          </SafeAreaView>
+        </NavigationContainer>
+      </UsersProvider>
+    </GestureHandlerRootView>
   );
 }
 
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "black",
+  },
+});
