@@ -24,7 +24,7 @@ export const useFirestore = () => {
       setLoading(true);
       setError(null);
   
-      const collections = ["exercises", "users", "workouts"];
+      const collections = ["exercises", "users", "routines"];
       
       for (const collectionName of collections) {
         let field = "name"; 
