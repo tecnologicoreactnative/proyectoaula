@@ -23,7 +23,8 @@ const FullBodyRoutine = () => {
 
   // URLs de ejemplo para las imágenes de los ejercicios
   const exerciseImages = {
-    ejercicio1: "https://www.ilovefit.org/wp-content/uploads/2017/07/press-de-banca.jpg",
+    ejercicio1:
+      "https://www.ilovefit.org/wp-content/uploads/2017/07/press-de-banca.jpg",
     ejercicio2: "https://example.com/ejercicio2.jpg",
     ejercicio3: "https://example.com/ejercicio3.jpg",
     ejercicio4: "https://example.com/ejercicio4.jpg",
@@ -182,6 +183,23 @@ const FullBodyRoutine = () => {
                 <Ionicons name="fitness" size={20} color="#3b82f6" />
                 <Text style={styles.exerciseName}>
                   {routine.ejercicio5 || "Ejercicio 5 no especificado"}
+                </Text>
+              </View>
+              <Text style={styles.exerciseDetail}>
+                3 series x 15 repeticiones
+              </Text>
+            </TouchableOpacity>
+
+            {/* TouchableOpacity 6 */}
+            <TouchableOpacity
+              style={styles.exerciseCard}
+              activeOpacity={0.7}
+              onPress={() => handleExercisePress("ejercicio6")}
+            >
+              <View style={styles.exerciseHeader}>
+                <Ionicons name="fitness" size={20} color="#3b82f6" />
+                <Text style={styles.exerciseName}>
+                  {routine.ejercicio6 || "Ejercicio 6 no especificado"}
                 </Text>
               </View>
               <Text style={styles.exerciseDetail}>
