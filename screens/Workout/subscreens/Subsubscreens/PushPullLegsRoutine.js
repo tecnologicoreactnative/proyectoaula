@@ -86,7 +86,7 @@ const PushPullLegsRoutine = () => {
             {/* Header */}
             <View style={styles.header}>
               <Text style={styles.routineName}>
-                {routine.name || "Rutina Full Body"}
+                {routine.name || "Rutina Push Pull Legs"}
               </Text>
               <Text style={styles.routineDescription}>
                 {routine.descripcion || "Descripción no disponible"}

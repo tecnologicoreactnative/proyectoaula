@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
+  Modal,
+  Pressable,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoutinesContext } from "../../../../context/RoutinesContext";
@@ -14,7 +17,18 @@ import { useRoutinesContext } from "../../../../context/RoutinesContext";
 const FullBodyRoutine = () => {
   const [routine, setRoutine] = useState(null);
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
+
+  // URLs de ejemplo para las imágenes de los ejercicios
+  const exerciseImages = {
+    ejercicio1: "https://www.ilovefit.org/wp-content/uploads/2017/07/press-de-banca.jpg",
+    ejercicio2: "https://example.com/ejercicio2.jpg",
+    ejercicio3: "https://example.com/ejercicio3.jpg",
+    ejercicio4: "https://example.com/ejercicio4.jpg",
+    ejercicio5: "https://example.com/ejercicio5.jpg",
+  };
 
   useEffect(() => {
     const fetchRoutine = async () => {
@@ -35,6 +49,15 @@ const FullBodyRoutine = () => {
     };
     fetchRoutine();
   }, []);
+
+  const handleExercisePress = (exerciseKey) => {
+    if (exerciseImages[exerciseKey]) {
+      setCurrentImage(exerciseImages[exerciseKey]);
+      setImageModalVisible(true);
+    } else {
+      console.log("No hay imagen disponible para este ejercicio");
+    }
+  };
 
   if (loading) {
     return (
@@ -57,29 +80,35 @@ const FullBodyRoutine = () => {
     <View style={styles.centeredContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {routine ? (
-          <Animated.View style={[styles.routineContainer, { opacity: fadeAnim }]}>
+          <Animated.View
+            style={[styles.routineContainer, { opacity: fadeAnim }]}
+          >
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.routineName}>{routine.name || "Rutina Full Body"}</Text>
+              <Text style={styles.routineName}>
+                {routine.name || "Rutina Full Body"}
+              </Text>
               <Text style={styles.routineDescription}>
                 {routine.descripcion || "Descripción no disponible"}
               </Text>
               <View style={styles.durationBadge}>
                 <Ionicons name="time-outline" size={16} color="#3b82f6" />
                 <Text style={styles.durationText}>
-                  {routine.duration ? `${routine.duration} mins` : "Duración no especificada"}
+                  {routine.duration
+                    ? `${routine.duration} mins`
+                    : "Duración no especificada"}
                 </Text>
               </View>
             </View>
 
             {/* Ejercicios */}
             <Text style={styles.sectionTitle}>Ejercicios</Text>
-            
+
             {/* TouchableOpacity 1 */}
             <TouchableOpacity
               style={styles.exerciseCard}
               activeOpacity={0.7}
-              onPress={() => console.log("Ejercicio 1 presionado")}
+              onPress={() => handleExercisePress("ejercicio1")}
             >
               <View style={styles.exerciseHeader}>
                 <Ionicons name="barbell" size={20} color="#3b82f6" />
@@ -87,14 +116,16 @@ const FullBodyRoutine = () => {
                   {routine.ejercicio1 || "Ejercicio 1 no especificado"}
                 </Text>
               </View>
-              <Text style={styles.exerciseDetail}>4 series x 12 repeticiones</Text>
+              <Text style={styles.exerciseDetail}>
+                4 series x 12 repeticiones
+              </Text>
             </TouchableOpacity>
 
             {/* TouchableOpacity 2 */}
             <TouchableOpacity
               style={styles.exerciseCard}
               activeOpacity={0.7}
-              onPress={() => console.log("Ejercicio 2 presionado")}
+              onPress={() => handleExercisePress("ejercicio2")}
             >
               <View style={styles.exerciseHeader}>
                 <Ionicons name="body" size={20} color="#3b82f6" />
@@ -102,14 +133,16 @@ const FullBodyRoutine = () => {
                   {routine.ejercicio2 || "Ejercicio 2 no especificado"}
                 </Text>
               </View>
-              <Text style={styles.exerciseDetail}>3 series x 10 repeticiones</Text>
+              <Text style={styles.exerciseDetail}>
+                3 series x 10 repeticiones
+              </Text>
             </TouchableOpacity>
 
             {/* TouchableOpacity 3 */}
             <TouchableOpacity
               style={styles.exerciseCard}
               activeOpacity={0.7}
-              onPress={() => console.log("Ejercicio 3 presionado")}
+              onPress={() => handleExercisePress("ejercicio3")}
             >
               <View style={styles.exerciseHeader}>
                 <Ionicons name="fitness" size={20} color="#3b82f6" />
@@ -117,7 +150,43 @@ const FullBodyRoutine = () => {
                   {routine.ejercicio3 || "Ejercicio 3 no especificado"}
                 </Text>
               </View>
-              <Text style={styles.exerciseDetail}>3 series x 15 repeticiones</Text>
+              <Text style={styles.exerciseDetail}>
+                3 series x 15 repeticiones
+              </Text>
+            </TouchableOpacity>
+
+            {/* TouchableOpacity 4 */}
+            <TouchableOpacity
+              style={styles.exerciseCard}
+              activeOpacity={0.7}
+              onPress={() => handleExercisePress("ejercicio4")}
+            >
+              <View style={styles.exerciseHeader}>
+                <Ionicons name="fitness" size={20} color="#3b82f6" />
+                <Text style={styles.exerciseName}>
+                  {routine.ejercicio4 || "Ejercicio 4 no especificado"}
+                </Text>
+              </View>
+              <Text style={styles.exerciseDetail}>
+                3 series x 15 repeticiones
+              </Text>
+            </TouchableOpacity>
+
+            {/* TouchableOpacity 5 */}
+            <TouchableOpacity
+              style={styles.exerciseCard}
+              activeOpacity={0.7}
+              onPress={() => handleExercisePress("ejercicio5")}
+            >
+              <View style={styles.exerciseHeader}>
+                <Ionicons name="fitness" size={20} color="#3b82f6" />
+                <Text style={styles.exerciseName}>
+                  {routine.ejercicio5 || "Ejercicio 5 no especificado"}
+                </Text>
+              </View>
+              <Text style={styles.exerciseDetail}>
+                3 series x 15 repeticiones
+              </Text>
             </TouchableOpacity>
 
             {/* Botón de acción */}
@@ -125,6 +194,34 @@ const FullBodyRoutine = () => {
               <Text style={styles.startButtonText}>Comenzar Rutina</Text>
               <Ionicons name="play" size={18} color="white" />
             </TouchableOpacity>
+
+            {/* Modal para visualizar imágenes */}
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={imageModalVisible}
+              onRequestClose={() => setImageModalVisible(false)}
+            >
+              <View style={styles.modalContainer}>
+                <Pressable
+                  style={styles.modalBackground}
+                  onPress={() => setImageModalVisible(false)}
+                />
+                <View style={styles.modalContent}>
+                  <Image
+                    source={{ uri: currentImage }}
+                    style={styles.modalImage}
+                    resizeMode="contain"
+                  />
+                  <Pressable
+                    style={styles.closeButton}
+                    onPress={() => setImageModalVisible(false)}
+                  >
+                    <Ionicons name="close" size={24} color="white" />
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
           </Animated.View>
         ) : (
           <View style={styles.notFoundContainer}>
@@ -138,41 +235,27 @@ const FullBodyRoutine = () => {
 };
 
 const styles = StyleSheet.create({
-    centeredContainer: {
+  centeredContainer: {
     flex: 1,
-    justifyContent: "center", // Centrado vertical
-    alignItems: "center", // Centrado horizontal
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#0f172a",
     padding: 20,
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: "center", // Asegura que el contenido del Scroll esté centrado
-    width: "100%", // Ocupa todo el ancho disponible
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    backgroundColor: "#0f172a", // Fondo oscuro elegante
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#0f172a",
-  },
-  loadingContainer: {
     justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
+    width: "100%",
   },
   loadingText: {
     color: "#e2e8f0",
     fontSize: 16,
   },
   routineContainer: {
-    backgroundColor: "#1e293b", // Tarjetas oscuras con contraste
+    backgroundColor: "#1e293b",
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#3b82f6", // Sombra azul neon
+    shadowColor: "#3b82f6",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
@@ -268,6 +351,39 @@ const styles = StyleSheet.create({
   notFoundText: {
     color: "#9ca3af",
     fontSize: 18,
+  },
+  // Estilos para el modal
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.8)",
+  },
+  modalBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  modalContent: {
+    width: "90%",
+    height: "70%",
+    backgroundColor: "#1e293b",
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  modalImage: {
+    width: "100%",
+    height: "100%",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 20,
+    padding: 5,
   },
 });
 
