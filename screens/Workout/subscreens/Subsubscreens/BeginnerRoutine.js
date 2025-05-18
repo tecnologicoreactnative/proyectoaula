@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
-    width: "100%",
+    width: "90%",
   },
   loadingText: {
     color: "#e2e8f0",
@@ -317,6 +317,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#e2e8f0",
+    maxWidth: "95%",
   },
   exerciseDetail: {
     fontSize: 13,

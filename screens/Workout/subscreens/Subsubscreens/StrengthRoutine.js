@@ -30,6 +30,32 @@ const StrengthRoutine = () => {
     ejercicio5: "https://example.com/ejercicio5.jpg",
   };
 
+   const countExercises = {
+    pressbanca: [{ series: 4, reps: 8 }],
+    pressmilitar: [{ series: 3, reps: 10 }],
+    fondos: [{ series: 3, reps: 12 }],
+    elevaciones: [{ series: 3, reps: 15 }],
+    extensiones: [{ series: 3, reps: 12 }],
+  };
+
+    const ExerciseCard = ({ icon, exerciseKey, name, series, reps, onPress }) => (
+    <TouchableOpacity
+      style={styles.exerciseCard}
+      activeOpacity={0.7}
+      onPress={() => onPress(exerciseKey)}
+    >
+      <View style={styles.exerciseHeader}>
+        <Ionicons name={icon} size={20} color="#3b82f6" />
+        <Text style={styles.exerciseName}>
+          {name || "Ejercicio no especificado"}
+        </Text>
+      </View>
+      <Text style={styles.exerciseDetail}>
+        {series} series x {reps} repeticiones
+      </Text>
+    </TouchableOpacity>
+  );
+
   useEffect(() => {
     const fetchRoutine = async () => {
       try {
@@ -245,7 +271,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
-    width: "100%",
+    width: "90%",
   },
   loadingText: {
     color: "#e2e8f0",
@@ -317,6 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#e2e8f0",
+    maxWidth: "95%",
   },
   exerciseDetail: {
     fontSize: 13,

@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginLeft: 15,
+    maxWidth: "95%",
   },
   icon: {
     marginRight: 10,
