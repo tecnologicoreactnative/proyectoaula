@@ -4,10 +4,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import MainStackNavigator from "./Navigation/MainStackNavigator";
 import { UsersProvider } from "./context/UsersContext";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { RoutinesProvider } from "./context/RoutinesContext";
 
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <RoutinesProvider>
       <UsersProvider>
         <NavigationContainer>
           <SafeAreaView style={styles.container}>
@@ -15,6 +17,7 @@ export default function App() {
           </SafeAreaView>
         </NavigationContainer>
       </UsersProvider>
+      </RoutinesProvider>
     </GestureHandlerRootView>
   );
 }

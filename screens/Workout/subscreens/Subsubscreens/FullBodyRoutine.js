@@ -1,178 +1,371 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
   ScrollView,
+  Animated,
+  Modal,
+  Pressable,
+  Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRoutinesContext } from "../../../../context/RoutinesContext";
+import ExerciseCard from "../../../../components/workout/ExerciseCard";
 
 const FullBodyRoutine = () => {
-  const { routines, getRoutine, loading } = useRoutinesContext();
-  const [routineDetails, setRoutineDetails] = useState(null);
-  const [error, setError] = useState(null);
+  const [routine, setRoutine] = useState(null);
+  const [fadeAnim] = useState(new Animated.Value(0));
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
+  const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
+
+  // URLs de ejemplo para las imágenes de los ejercicios
+  const exerciseImages = {
+    ejercicio1:
+      "https://www.runningcorrer.com.ar/wprunning/wp-content/uploads/2022/03/ejercicios-sentadillas.webp",
+    ejercicio2: "https://www.ilovefit.org/wp-content/uploads/2017/07/flexiones.jpg",
+    ejercicio3: "https://www.fisioterapiaconmueve.com/wp-content/uploads/2023/04/dominadas.jpg",
+    ejercicio4: "https://static.strengthlevel.com/images/exercises/deficit-deadlift/deficit-deadlift-800.jpg",
+    ejercicio5: "https://bulevip.com/blog/wp-content/uploads/2024/10/tenica-plank.jpg",
+    ejercicio6: "https://phantom-telva.uecdn.es/b40c0befaa878ad45ac38270ecab95e3/resize/828/f/jpg/assets/multimedia/imagenes/2021/02/26/16143187500035.jpg",
+  };
+
+  const countExercises = {
+    sentadillas: [{ series: 4, reps: 12 }],
+    flexiones: [{ series: 3, reps: 12 }],
+    dominadas: [{ series: 3, reps: 10 }],
+    pesomuerto: [{ series: 4, reps: 10 }],
+    press: [{ series: 3, reps: 30 }],
+    plancha: [{ series: 3, reps: 10 }],
+  };
 
   useEffect(() => {
-    const loadFullBodyRoutine = async () => {
+    const fetchRoutine = async () => {
       try {
-        const fullBodyRoutine = routines.find(
-          (r) =>
-            r.name.toLowerCase() === "fullbodyroutine" ||
-            r.name.toLowerCase() === "full body routine"
-        );
-        if (fullBodyRoutine) {
-          const details = await getRoutine(fullBodyRoutine.id);
-          setRoutineDetails(details);
-        } else {
-          setError("No se encontró la rutina Full Body");
+        await loadAllRoutines();
+        const routineData = await getRoutine("FullBodyRoutine");
+        if (routineData) {
+          setRoutine(routineData);
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 900,
+            useNativeDriver: true,
+          }).start();
         }
       } catch (err) {
-        setError("Error al cargar la rutina");
-        console.error(err);
+        console.error("Error fetching routine:", err);
       }
     };
+    fetchRoutine();
+  }, []);
 
-    loadFullBodyRoutine();
-  }, [routines]);
+  const handleExercisePress = (exerciseKey) => {
+    if (exerciseImages[exerciseKey]) {
+      setCurrentImage(exerciseImages[exerciseKey]);
+      setImageModalVisible(true);
+    } else {
+      console.log("No hay imagen disponible para este ejercicio");
+    }
+  };
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={styles.centeredContainer}>
+        <ActivityIndicator size="large" color="#3b82f6" />
+        <Text style={styles.loadingText}>Cargando rutina...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
-  }
-
-  if (!routineDetails) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>No se encontraron detalles de la rutina</Text>
+      <View style={styles.centeredContainer}>
+        <Text style={styles.error}>⚠️ Error: {error}</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{routineDetails.name}</Text>
-        <Text style={styles.subtitle}>
-          Dificultad: {routineDetails.difficulty}
-        </Text>
-        <Text style={styles.duration}>
-          Duración: {routineDetails.duration} minutos
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Descripción</Text>
-        <Text style={styles.description}>{routineDetails.description}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Ejercicios</Text>
-        {routineDetails.exercises.map((exercise, index) => (
-          <View key={index} style={styles.exerciseCard}>
-            <Text style={styles.exerciseName}>{exercise.name}</Text>
-            <View style={styles.exerciseDetails}>
-              <Text>Series: {exercise.sets}</Text>
-              <Text>Repeticiones: {exercise.reps}</Text>
-              <Text>Descanso: {exercise.rest} seg</Text>
+    <View style={styles.centeredContainer}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {routine ? (
+          <Animated.View
+            style={[styles.routineContainer, { opacity: fadeAnim }]}
+          >
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.routineName}>
+                {routine.name || "Rutina Full Body"}
+              </Text>
+              <Text style={styles.routineDescription}>
+                {routine.descripcion || "Descripción no disponible"}
+              </Text>
+              <View style={styles.durationBadge}>
+                <Ionicons name="time-outline" size={16} color="#3b82f6" />
+                <Text style={styles.durationText}>
+                  {routine.duration
+                    ? `${routine.duration} mins`
+                    : "Duración no especificada"}
+                </Text>
+              </View>
             </View>
+
+            {/* Ejercicios */}
+            <Text style={styles.sectionTitle}>Ejercicios</Text>
+
+            <ExerciseCard
+              icon="barbell"
+              exerciseKey="ejercicio1"
+              name={routine.ejercicio1}
+              series={countExercises.sentadillas[0].series}
+              reps={countExercises.sentadillas[0].reps}
+              onPress={handleExercisePress}
+            />
+
+            <ExerciseCard
+              icon="body"
+              exerciseKey="ejercicio2"
+              name={routine.ejercicio2}
+              series={countExercises.flexiones[0].series}
+              reps={countExercises.flexiones[0].reps}
+              onPress={handleExercisePress}
+            />
+
+            <ExerciseCard
+              icon="fitness"
+              exerciseKey="ejercicio3"
+              name={routine.ejercicio3}
+              series={countExercises.dominadas[0].series}
+              reps={countExercises.dominadas[0].reps}
+              onPress={handleExercisePress}
+            />
+
+            <ExerciseCard
+              icon="fitness"
+              exerciseKey="ejercicio4"
+              name={routine.ejercicio4}
+              series={countExercises.pesomuerto[0].series}
+              reps={countExercises.pesomuerto[0].reps}
+              onPress={handleExercisePress}
+            />
+
+            <ExerciseCard
+              icon="fitness"
+              exerciseKey="ejercicio5"
+              name={routine.ejercicio5}
+              series={countExercises.press[0].series}
+              reps={countExercises.press[0].reps}
+              onPress={handleExercisePress}
+            />
+
+            <ExerciseCard
+              icon="fitness"
+              exerciseKey="ejercicio6"
+              name={routine.ejercicio6}
+              series={countExercises.plancha[0].series}
+              reps={countExercises.plancha[0].reps}
+              onPress={handleExercisePress}
+            />
+
+            {/* Botón de acción */}
+            <TouchableOpacity style={styles.startButton} activeOpacity={0.8}>
+              <Text style={styles.startButtonText}>Comenzar Rutina</Text>
+              <Ionicons name="play" size={18} color="white" />
+            </TouchableOpacity>
+
+            {/* Modal para visualizar imágenes */}
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={imageModalVisible}
+              onRequestClose={() => setImageModalVisible(false)}
+            >
+              <View style={styles.modalContainer}>
+                <Pressable
+                  style={styles.modalBackground}
+                  onPress={() => setImageModalVisible(false)}
+                />
+                <View style={styles.modalContent}>
+                  <Image
+                    source={{ uri: currentImage }}
+                    style={styles.modalImage}
+                    resizeMode="contain"
+                  />
+                  <Pressable
+                    style={styles.closeButton}
+                    onPress={() => setImageModalVisible(false)}
+                  >
+                    <Ionicons name="close" size={24} color="white" />
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+          </Animated.View>
+        ) : (
+          <View style={styles.notFoundContainer}>
+            <Ionicons name="sad-outline" size={40} color="#9ca3af" />
+            <Text style={styles.notFoundText}>Rutina no encontrada</Text>
           </View>
-        ))}
-      </View>
-    </ScrollView>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollContainer: {
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#0f172a",
     padding: 20,
-    backgroundColor: "#f0f0f0",
   },
-  loadingContainer: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: "center",
-    alignItems: "center",
+    width: "90%",
   },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
+  loadingText: {
+    color: "#e2e8f0",
+    fontSize: 16,
+  },
+  routineContainer: {
+    backgroundColor: "#1e293b",
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#3b82f6",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
   header: {
     marginBottom: 20,
-    paddingBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomColor: "#334155",
+    paddingBottom: 16,
   },
-  title: {
+  routineName: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
+    fontWeight: "700",
+    color: "#f8fafc",
+    marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
+  routineDescription: {
+    fontSize: 14,
+    color: "#94a3b8",
+    marginBottom: 12,
   },
-  duration: {
-    fontSize: 16,
-    color: "#666",
-    fontStyle: "italic",
+  durationBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#1e3a8a20",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    alignSelf: "flex-start",
   },
-  section: {
-    marginBottom: 25,
+  durationText: {
+    color: "#3b82f6",
+    fontSize: 12,
+    fontWeight: "500",
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "600",
-    color: "#444",
-    marginBottom: 10,
-  },
-  description: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#555",
+    color: "#f8fafc",
+    marginBottom: 16,
   },
   exerciseCard: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: "#334155",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: "#3b82f6",
+  },
+  exerciseHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 8,
   },
   exerciseName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#333",
-  },
-  exerciseDetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  errorText: {
-    color: "red",
     fontSize: 16,
+    fontWeight: "600",
+    color: "#e2e8f0",
+    maxWidth: "95%",
   },
-  text: {
+  exerciseDetail: {
+    fontSize: 13,
+    color: "#94a3b8",
+  },
+  startButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#3b82f6",
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  startButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  error: {
+    color: "#ef4444",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+  notFoundText: {
+    color: "#9ca3af",
     fontSize: 18,
-    color: "#333",
+  },
+  // Estilos para el modal
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.8)",
+  },
+  modalBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  modalContent: {
+    width: "90%",
+    height: "70%",
+    backgroundColor: "#1e293b",
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  modalImage: {
+    width: "100%",
+    height: "100%",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 20,
+    padding: 5,
   },
 });
 
