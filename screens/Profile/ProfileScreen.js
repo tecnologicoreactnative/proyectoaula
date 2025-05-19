@@ -20,8 +20,10 @@ import { useUsersContext } from "../../context/UsersContext";
 import SettingsButton from "../../components/Profile/Settings/SettingsButton";
 import { Ionicons } from "@expo/vector-icons";
 import Brand from "../../components/Logo/Brand";
+import { useNavigation } from "@react-navigation/native";
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [newName, setNewName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
@@ -233,7 +235,7 @@ const ProfileScreen = () => {
             <Text style={styles.infoText}>
               Bio: {CurrentUser.bio || "No disponible"}
             </Text>
-            <Text style={[styles.infoText, { flexWrap: 'wrap' }]}>
+            <Text style={[styles.infoText, { flexWrap: "wrap" }]}>
               Social:{" "}
               <TouchableOpacity
                 onPress={() =>
@@ -265,7 +267,7 @@ const ProfileScreen = () => {
 
           <TouchableOpacity
             style={[styles.actionButton, styles.statsButton]}
-            onPress={() => console.log("Estadísticas presionado")}
+            onPress={() => navigation.navigate("Stats")}
           >
             <Text style={styles.buttonText}>Estadísticas</Text>
             <Ionicons

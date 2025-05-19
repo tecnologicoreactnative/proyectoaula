@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoutinesContext } from "../../../../context/RoutinesContext";
+import ExerciseCard from "../../../../components/workout/ExerciseCard";
 
 const CalisthenicsRoutine = () => {
   const [routine, setRoutine] = useState(null);
@@ -23,11 +24,19 @@ const CalisthenicsRoutine = () => {
 
   // URLs de ejemplo para las imágenes de los ejercicios
   const exerciseImages = {
-    ejercicio1: "https://www.ilovefit.org/wp-content/uploads/2017/07/press-de-banca.jpg",
-    ejercicio2: "https://example.com/ejercicio2.jpg",
-    ejercicio3: "https://example.com/ejercicio3.jpg",
-    ejercicio4: "https://example.com/ejercicio4.jpg",
-    ejercicio5: "https://example.com/ejercicio5.jpg",
+    ejercicio1: "https://static.strengthlevel.com/images/exercises/pull-ups/pull-ups-800.jpg",
+    ejercicio2: "https://static.strengthlevel.com/images/exercises/dips/dips-800.jpg",
+    ejercicio3: "https://static.strengthlevel.com/images/exercises/pistol-squat/pistol-squat-800.jpg",
+    ejercicio4: "https://i.pinimg.com/736x/6a/10/88/6a1088ce52211491912ed45a0463178e.jpg",
+    ejercicio5: "https://calistenia.es/wp-content/uploads/2024/02/imagen-51.png",
+  };
+
+    const countExercises = {
+    dominadas: [{ series: 4, reps: 8 }],
+    fondosparalelas: [{ series: 3, reps: 10 }],
+    pistolsquats: [{ series: 3, reps: 12 }],
+    planchahumana: [{ series: 3, reps: 5 }],
+    hadstandpushups: [{ series: 3, reps: 5 }],
   };
 
   useEffect(() => {
@@ -104,90 +113,50 @@ const CalisthenicsRoutine = () => {
             {/* Ejercicios */}
             <Text style={styles.sectionTitle}>Ejercicios</Text>
 
-            {/* TouchableOpacity 1 */}
-            <TouchableOpacity
-              style={styles.exerciseCard}
-              activeOpacity={0.7}
-              onPress={() => handleExercisePress("ejercicio1")}
-            >
-              <View style={styles.exerciseHeader}>
-                <Ionicons name="barbell" size={20} color="#3b82f6" />
-                <Text style={styles.exerciseName}>
-                  {routine.ejercicio1 || "Ejercicio 1 no especificado"}
-                </Text>
-              </View>
-              <Text style={styles.exerciseDetail}>
-                4 series x 12 repeticiones
-              </Text>
-            </TouchableOpacity>
+           <ExerciseCard
+              icon="barbell"
+              exerciseKey="ejercicio1"
+              name={routine.ejercicio1}
+              series={countExercises.dominadas[0].series}
+              reps={countExercises.dominadas[0].reps}
+              onPress={handleExercisePress}
+            />
 
-            {/* TouchableOpacity 2 */}
-            <TouchableOpacity
-              style={styles.exerciseCard}
-              activeOpacity={0.7}
-              onPress={() => handleExercisePress("ejercicio2")}
-            >
-              <View style={styles.exerciseHeader}>
-                <Ionicons name="body" size={20} color="#3b82f6" />
-                <Text style={styles.exerciseName}>
-                  {routine.ejercicio2 || "Ejercicio 2 no especificado"}
-                </Text>
-              </View>
-              <Text style={styles.exerciseDetail}>
-                3 series x 10 repeticiones
-              </Text>
-            </TouchableOpacity>
+            <ExerciseCard
+              icon="body"
+              exerciseKey="ejercicio2"
+              name={routine.ejercicio2}
+              series={countExercises.fondosparalelas[0].series}
+              reps={countExercises.fondosparalelas[0].reps}
+              onPress={handleExercisePress}
+            />
 
-            {/* TouchableOpacity 3 */}
-            <TouchableOpacity
-              style={styles.exerciseCard}
-              activeOpacity={0.7}
-              onPress={() => handleExercisePress("ejercicio3")}
-            >
-              <View style={styles.exerciseHeader}>
-                <Ionicons name="fitness" size={20} color="#3b82f6" />
-                <Text style={styles.exerciseName}>
-                  {routine.ejercicio3 || "Ejercicio 3 no especificado"}
-                </Text>
-              </View>
-              <Text style={styles.exerciseDetail}>
-                3 series x 15 repeticiones
-              </Text>
-            </TouchableOpacity>
+            <ExerciseCard
+              icon="fitness"
+              exerciseKey="ejercicio3"
+              name={routine.ejercicio3}
+              series={countExercises.pistolsquats[0].series}
+              reps={countExercises.pistolsquats[0].reps}
+              onPress={handleExercisePress}
+            />
 
-            {/* TouchableOpacity 4 */}
-            <TouchableOpacity
-              style={styles.exerciseCard}
-              activeOpacity={0.7}
-              onPress={() => handleExercisePress("ejercicio4")}
-            >
-              <View style={styles.exerciseHeader}>
-                <Ionicons name="fitness" size={20} color="#3b82f6" />
-                <Text style={styles.exerciseName}>
-                  {routine.ejercicio4 || "Ejercicio 4 no especificado"}
-                </Text>
-              </View>
-              <Text style={styles.exerciseDetail}>
-                3 series x 15 repeticiones
-              </Text>
-            </TouchableOpacity>
+            <ExerciseCard
+              icon="fitness"
+              exerciseKey="ejercicio4"
+              name={routine.ejercicio4}
+              series={countExercises.planchahumana[0].series}
+              reps={countExercises.planchahumana[0].reps}
+              onPress={handleExercisePress}
+            />
 
-            {/* TouchableOpacity 5 */}
-            <TouchableOpacity
-              style={styles.exerciseCard}
-              activeOpacity={0.7}
-              onPress={() => handleExercisePress("ejercicio5")}
-            >
-              <View style={styles.exerciseHeader}>
-                <Ionicons name="fitness" size={20} color="#3b82f6" />
-                <Text style={styles.exerciseName}>
-                  {routine.ejercicio5 || "Ejercicio 5 no especificado"}
-                </Text>
-              </View>
-              <Text style={styles.exerciseDetail}>
-                3 series x 15 repeticiones
-              </Text>
-            </TouchableOpacity>
+            <ExerciseCard
+              icon="fitness"
+              exerciseKey="ejercicio5"
+              name={routine.ejercicio5}
+              series={countExercises.hadstandpushups[0].series}
+              reps={countExercises.hadstandpushups[0].reps}
+              onPress={handleExercisePress}
+            />
 
             {/* Botón de acción */}
             <TouchableOpacity style={styles.startButton} activeOpacity={0.8}>

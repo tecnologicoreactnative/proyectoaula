@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoutinesContext } from "../../../../context/RoutinesContext";
+import ExerciseCard from "../../../../components/workout/ExerciseCard";
 
 const PushPullLegsRoutine = () => {
   const [routine, setRoutine] = useState(null);
@@ -23,11 +24,11 @@ const PushPullLegsRoutine = () => {
 
   // URLs de ejemplo para las imágenes de los ejercicios
   const exerciseImages = {
-    ejercicio1: "https://www.ilovefit.org/wp-content/uploads/2017/07/press-de-banca.jpg",
-    ejercicio2: "https://example.com/ejercicio2.jpg",
-    ejercicio3: "https://example.com/ejercicio3.jpg",
-    ejercicio4: "https://example.com/ejercicio4.jpg",
-    ejercicio5: "https://example.com/ejercicio5.jpg",
+    ejercicio1: "https://i.pinimg.com/474x/82/1b/20/821b20858c969fe48cd2c6a7d243ab22.jpg",
+    ejercicio2: "https://static.strengthlevel.com/images/exercises/military-press/military-press-800.jpg",
+    ejercicio3: "https://www.feda.net/wp-content/uploads/2019/02/dip.jpg",
+    ejercicio4: "https://static.strengthlevel.com/images/exercises/dumbbell-lateral-raise/dumbbell-lateral-raise-800.jpg",
+    ejercicio5: "https://static.strengthlevel.com/images/exercises/seated-dumbbell-tricep-extension/seated-dumbbell-tricep-extension-800.jpg",
   };
 
   const countExercises = {
@@ -83,24 +84,6 @@ const PushPullLegsRoutine = () => {
       </View>
     );
   }
-
-    const ExerciseCard = ({ icon, exerciseKey, name, series, reps, onPress }) => (
-      <TouchableOpacity
-        style={styles.exerciseCard}
-        activeOpacity={0.7}
-        onPress={() => onPress(exerciseKey)}
-      >
-        <View style={styles.exerciseHeader}>
-          <Ionicons name={icon} size={20} color="#3b82f6" />
-          <Text style={styles.exerciseName}>
-            {name || "Ejercicio no especificado"}
-          </Text>
-        </View>
-        <Text style={styles.exerciseDetail}>
-          {series} series x {reps} repeticiones
-        </Text>
-      </TouchableOpacity>
-    );
 
   return (
     <View style={styles.centeredContainer}>

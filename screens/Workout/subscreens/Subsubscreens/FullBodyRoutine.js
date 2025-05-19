@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoutinesContext } from "../../../../context/RoutinesContext";
+import ExerciseCard from "../../../../components/workout/ExerciseCard";
 
 const FullBodyRoutine = () => {
   const [routine, setRoutine] = useState(null);
@@ -24,11 +25,12 @@ const FullBodyRoutine = () => {
   // URLs de ejemplo para las imágenes de los ejercicios
   const exerciseImages = {
     ejercicio1:
-      "https://www.ilovefit.org/wp-content/uploads/2017/07/press-de-banca.jpg",
-    ejercicio2: "https://example.com/ejercicio2.jpg",
-    ejercicio3: "https://example.com/ejercicio3.jpg",
-    ejercicio4: "https://example.com/ejercicio4.jpg",
-    ejercicio5: "https://example.com/ejercicio5.jpg",
+      "https://www.runningcorrer.com.ar/wprunning/wp-content/uploads/2022/03/ejercicios-sentadillas.webp",
+    ejercicio2: "https://www.ilovefit.org/wp-content/uploads/2017/07/flexiones.jpg",
+    ejercicio3: "https://www.fisioterapiaconmueve.com/wp-content/uploads/2023/04/dominadas.jpg",
+    ejercicio4: "https://static.strengthlevel.com/images/exercises/deficit-deadlift/deficit-deadlift-800.jpg",
+    ejercicio5: "https://bulevip.com/blog/wp-content/uploads/2024/10/tenica-plank.jpg",
+    ejercicio6: "https://phantom-telva.uecdn.es/b40c0befaa878ad45ac38270ecab95e3/resize/828/f/jpg/assets/multimedia/imagenes/2021/02/26/16143187500035.jpg",
   };
 
   const countExercises = {
@@ -85,24 +87,6 @@ const FullBodyRoutine = () => {
       </View>
     );
   }
-
-  const ExerciseCard = ({ icon, exerciseKey, name, series, reps, onPress }) => (
-    <TouchableOpacity
-      style={styles.exerciseCard}
-      activeOpacity={0.7}
-      onPress={() => onPress(exerciseKey)}
-    >
-      <View style={styles.exerciseHeader}>
-        <Ionicons name={icon} size={20} color="#3b82f6" />
-        <Text style={styles.exerciseName}>
-          {name || "Ejercicio no especificado"}
-        </Text>
-      </View>
-      <Text style={styles.exerciseDetail}>
-        {series} series x {reps} repeticiones
-      </Text>
-    </TouchableOpacity>
-  );
 
   return (
     <View style={styles.centeredContainer}>
