@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ActivityIndicator,
-  TouchableOpacity,
   ScrollView,
   Animated,
   Modal,
@@ -14,6 +13,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRoutinesContext } from "../../../../context/RoutinesContext";
 import ExerciseCard from "../../../../components/workout/ExerciseCard";
+import useWorkoutTimer from "../../../../hooks/useWorkoutTimer";
+import Timer from "../../../../components/workout/Timer";
+import WorkoutButton from "../../../../components/workout/WorkoutButton";
+import ExerciseCheckbox from "../../../../components/workout/ExerciseCheckbox";
 
 const CoreRoutine = () => {
   const [routine, setRoutine] = useState(null);
@@ -22,26 +25,58 @@ const CoreRoutine = () => {
   const [currentImage, setCurrentImage] = useState("");
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
-  // URLs de ejemplo para las imágenes de los ejercicios
-  const exerciseImages = {
-    ejercicio1:
-      "https://static.strengthlevel.com/images/exercises/crunches/crunches-800.jpg",
-    ejercicio2:
-      "https://static.strengthlevel.com/images/exercises/lying-leg-raise/lying-leg-raise-800.jpg",
-    ejercicio3:
-      "https://liftmanual.com/wp-content/uploads/2023/04/russian-twist.jpg",
-    ejercicio4:
-      "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhZQi0Nx42uHU6Ex4ix3ZclI_5gXhWPvYZDSi580Dm7g_KwRaopz8Aeq-6Mlbm5pXFlNaA-uEbh2jWDSYMl6vRcxmmJpbVNNXXeKo4J_Yjbup4Xys0Y1-_FTsZ9rNNfcoHJqteVaNHRLr8/s1600/plancha-lateral.jpg",
-    ejercicio5:
-      "https://static.strengthlevel.com/images/exercises/bicycle-crunch/bicycle-crunch-800.jpg",
-  };
+  const {
+    isWorkoutActive,
+    elapsedTime,
+    formattedTime,
+    toggleWorkout,
+    completedExercises,
+    toggleExerciseComplete,
+  } = useWorkoutTimer();
 
-  const countExercises = {
-    crunches: [{ series: 3, reps: 15 }],
-    piernaselevadas: [{ series: 3, reps: 12 }],
-    russian: [{ series: 3, reps: 20 }],
-    planchalateral: [{ series: 3, reps: 30 }],
-    abdominalesbicicleta: [{ series: 3, reps: 20 }],
+  const exercisesConfig = [
+    {
+      id: "ejercicio1",
+      icon: "barbell",
+      image: "https://static.strengthlevel.com/images/exercises/crunches/crunches-800.jpg",
+      series: 3,
+      reps: 15,
+    },
+    {
+      id: "ejercicio2",
+      icon: "body",
+      image: "https://static.strengthlevel.com/images/exercises/lying-leg-raise/lying-leg-raise-800.jpg",
+      series: 3,
+      reps: 12,
+    },
+    {
+      id: "ejercicio3",
+      icon: "fitness",
+      image: "https://liftmanual.com/wp-content/uploads/2023/04/russian-twist.jpg",
+      series: 3,
+      reps: 20,
+    },
+    {
+      id: "ejercicio4",
+      icon: "fitness",
+      image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhZQi0Nx42uHU6Ex4ix3ZclI_5gXhWPvYZDSi580Dm7g_KwRaopz8Aeq-6Mlbm5pXFlNaA-uEbh2jWDSYMl6vRcxmmJpbVNNXXeKo4J_Yjbup4Xys0Y1-_FTsZ9rNNfcoHJqteVaNHRLr8/s1600/plancha-lateral.jpg",
+      series: 3,
+      reps: 30,
+    },
+    {
+      id: "ejercicio5",
+      icon: "fitness",
+      image: "https://static.strengthlevel.com/images/exercises/bicycle-crunch/bicycle-crunch-800.jpg",
+      series: 3,
+      reps: 20,
+    },
+  ];
+  const getExercisesData = () => {
+    if (!routine) return [];
+    return exercisesConfig.map((exercise) => ({
+      ...exercise,
+      name: routine[exercise.id] || `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
+    }));
   };
 
   useEffect(() => {
@@ -64,14 +99,17 @@ const CoreRoutine = () => {
     fetchRoutine();
   }, []);
 
-  const handleExercisePress = (exerciseKey) => {
-    if (exerciseImages[exerciseKey]) {
-      setCurrentImage(exerciseImages[exerciseKey]);
-      setImageModalVisible(true);
-    } else {
-      console.log("No hay imagen disponible para este ejercicio");
-    }
+  const handleExercisePress = (imageUrl) => {
+    setCurrentImage(imageUrl);
+    setImageModalVisible(true);
   };
+
+  const completionPercentage = useMemo(() => {
+    const exercises = getExercisesData();
+    if (!exercises.length) return 0;
+    const completedCount = Object.values(completedExercises).filter(Boolean).length;
+    return Math.round((completedCount / exercises.length) * 100);
+  }, [completedExercises, routine]);
 
   if (loading) {
     return (
@@ -94,10 +132,7 @@ const CoreRoutine = () => {
     <View style={styles.centeredContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {routine ? (
-          <Animated.View
-            style={[styles.routineContainer, { opacity: fadeAnim }]}
-          >
-            {/* Header */}
+          <Animated.View style={[styles.routineContainer, { opacity: fadeAnim }]}>
             <View style={styles.header}>
               <Text style={styles.routineName}>
                 {routine.name || "Rutina Core"}
@@ -108,67 +143,44 @@ const CoreRoutine = () => {
               <View style={styles.durationBadge}>
                 <Ionicons name="time-outline" size={16} color="#3b82f6" />
                 <Text style={styles.durationText}>
-                  {routine.duration
-                    ? `${routine.duration} mins`
-                    : "Duración no especificada"}
+                  {routine.duration ? `${routine.duration} mins` : "Duración no especificada"}
                 </Text>
               </View>
             </View>
 
-            {/* Ejercicios */}
+            {isWorkoutActive && (
+              <>
+                <Timer time={formattedTime} />
+                <Text style={styles.progressText}>
+                  Completado: {completionPercentage}%
+                </Text>
+              </>
+            )}
+
             <Text style={styles.sectionTitle}>Ejercicios</Text>
-            <ExerciseCard
-              icon="barbell"
-              exerciseKey="ejercicio1"
-              name={routine.ejercicio1}
-              series={countExercises.crunches[0].series}
-              reps={countExercises.crunches[0].reps}
-              onPress={handleExercisePress}
-            />
 
-            <ExerciseCard
-              icon="body"
-              exerciseKey="ejercicio2"
-              name={routine.ejercicio2}
-              series={countExercises.piernaselevadas[0].series}
-              reps={countExercises.piernaselevadas[0].reps}
-              onPress={handleExercisePress}
-            />
+            {getExercisesData().map((exercise) => (
+              <View key={exercise.id} style={styles.exerciseContainer}>
+                <View style={[styles.exerciseCardWrapper, { width: isWorkoutActive ? "90%" : "100%" }]}>
+                  <ExerciseCard
+                    icon={exercise.icon}
+                    name={exercise.name}
+                    series={exercise.series}
+                    reps={exercise.reps}
+                    onPress={() => handleExercisePress(exercise.image)}
+                  />
+                </View>
+                {isWorkoutActive && (
+                  <ExerciseCheckbox
+                    isCompleted={completedExercises[exercise.id]}
+                    onToggle={() => toggleExerciseComplete(exercise.id)}
+                  />
+                )}
+              </View>
+            ))}
 
-            <ExerciseCard
-              icon="fitness"
-              exerciseKey="ejercicio3"
-              name={routine.ejercicio3}
-              series={countExercises.russian[0].series}
-              reps={countExercises.russian[0].reps}
-              onPress={handleExercisePress}
-            />
+            <WorkoutButton isActive={isWorkoutActive} onPress={toggleWorkout} />
 
-            <ExerciseCard
-              icon="fitness"
-              exerciseKey="ejercicio4"
-              name={routine.ejercicio4}
-              series={countExercises.planchalateral[0].series}
-              reps={countExercises.planchalateral[0].reps}
-              onPress={handleExercisePress}
-            />
-
-            <ExerciseCard
-              icon="fitness"
-              exerciseKey="ejercicio5"
-              name={routine.ejercicio5}
-              series={countExercises.abdominalesbicicleta[0].series}
-              reps={countExercises.abdominalesbicicleta[0].reps}
-              onPress={handleExercisePress}
-            />
-
-            {/* Botón de acción */}
-            <TouchableOpacity style={styles.startButton} activeOpacity={0.8}>
-              <Text style={styles.startButtonText}>Comenzar Rutina</Text>
-              <Ionicons name="play" size={18} color="white" />
-            </TouchableOpacity>
-
-            {/* Modal para visualizar imágenes */}
             <Modal
               animationType="fade"
               transparent={true}
@@ -214,11 +226,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#0f172a",
     padding: 20,
+    paddingTop: 50,
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
-    width: "90%",
+    width: "100%",
   },
   loadingText: {
     color: "#e2e8f0",
@@ -233,6 +246,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 6,
+    width: "100%",
   },
   header: {
     marginBottom: 20,
@@ -272,44 +286,21 @@ const styles = StyleSheet.create({
     color: "#f8fafc",
     marginBottom: 16,
   },
-  exerciseCard: {
-    backgroundColor: "#334155",
-    borderRadius: 12,
-    padding: 16,
+  exerciseContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: "#3b82f6",
+    width: '100%',
   },
-  exerciseHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 8,
+  exerciseCardWrapper: {
+    flex: 1,
   },
-  exerciseName: {
+  progressText: {
+    color: '#3b82f6',
+    textAlign: 'center',
+    marginVertical: 10,
     fontSize: 16,
-    fontWeight: "600",
-    color: "#e2e8f0",
-    maxWidth: "95%",
-  },
-  exerciseDetail: {
-    fontSize: 13,
-    color: "#94a3b8",
-  },
-  startButton: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: "#3b82f6",
-    paddingVertical: 14,
-    borderRadius: 12,
-    marginTop: 20,
-  },
-  startButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
   },
   error: {
     color: "#ef4444",
@@ -326,7 +317,6 @@ const styles = StyleSheet.create({
     color: "#9ca3af",
     fontSize: 18,
   },
-  // Estilos para el modal
   modalContainer: {
     flex: 1,
     justifyContent: "center",
