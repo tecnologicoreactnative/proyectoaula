@@ -25,13 +25,15 @@ const PushPullLegsRoutine = () => {
   const [currentImage, setCurrentImage] = useState("");
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
-  const {
+   const {
     isWorkoutActive,
     elapsedTime,
     formattedTime,
-    toggleWorkout,
+    handleWorkoutToggle, 
     completedExercises,
     toggleExerciseComplete,
+    isSaving,
+    completionPercentage, 
   } = useWorkoutTimer();
 
   const exercisesConfig = [
@@ -105,13 +107,6 @@ const PushPullLegsRoutine = () => {
     setImageModalVisible(true);
   };
 
-  const completionPercentage = useMemo(() => {
-    const exercises = getExercisesData();
-    if (!exercises.length) return 0;
-    const completedCount = Object.values(completedExercises).filter(Boolean).length;
-    return Math.round((completedCount / exercises.length) * 100);
-  }, [completedExercises, routine]);
-
   if (loading) {
     return (
       <View style={styles.centeredContainer}>
@@ -128,6 +123,24 @@ const PushPullLegsRoutine = () => {
       </View>
     );
   }
+
+    const handlePress = async () => {
+    try {
+      const result = await handleWorkoutToggle();
+      
+      if (result?.action === 'stop') {
+        navigation.navigate('Stats', { 
+          refresh: true,
+          workoutData: {
+            routineName: routine?.name || "Push Pull Legs",
+            ...result.workoutData
+          }
+        });
+      }
+    } catch (error) {
+      Alert.alert("Error", "No se pudo guardar la sesión");
+    }
+  };
 
   return (
     <View style={styles.centeredContainer}>
@@ -180,7 +193,11 @@ const PushPullLegsRoutine = () => {
               </View>
             ))}
 
-            <WorkoutButton isActive={isWorkoutActive} onPress={toggleWorkout} />
+            <WorkoutButton
+              isActive={isWorkoutActive}
+              onPress={handlePress}
+              isLoading={isSaving}
+            />
 
             <Modal
               animationType="fade"

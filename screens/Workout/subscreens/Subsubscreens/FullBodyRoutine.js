@@ -29,9 +29,11 @@ const FullBodyRoutine = () => {
     isWorkoutActive,
     elapsedTime,
     formattedTime,
-    toggleWorkout,
+    handleWorkoutToggle,
     completedExercises,
     toggleExerciseComplete,
+    isSaving,
+    completionPercentage,
   } = useWorkoutTimer();
 
   const exercisesConfig = [
@@ -89,7 +91,9 @@ const FullBodyRoutine = () => {
     if (!routine) return [];
     return exercisesConfig.map((exercise) => ({
       ...exercise,
-      name: routine[exercise.id] || `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
+      name:
+        routine[exercise.id] ||
+        `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
     }));
   };
 
@@ -118,13 +122,6 @@ const FullBodyRoutine = () => {
     setImageModalVisible(true);
   };
 
-  const completionPercentage = useMemo(() => {
-    const exercises = getExercisesData();
-    if (!exercises.length) return 0;
-    const completedCount = Object.values(completedExercises).filter(Boolean).length;
-    return Math.round((completedCount / exercises.length) * 100);
-  }, [completedExercises, routine]);
-
   if (loading) {
     return (
       <View style={styles.centeredContainer}>
@@ -142,11 +139,31 @@ const FullBodyRoutine = () => {
     );
   }
 
+const handlePress = async () => {
+  const result = await handleWorkoutToggle();
+  
+  if (result?.action === 'stop') {
+    if (result.success) {
+      navigation.navigate('Stats', { 
+        refresh: true,
+        workoutData: {
+          routineName: routine?.name || "Push Pull Legs",
+          ...result.workoutData
+        }
+      });
+    } else {
+      Alert.alert("Error", "No se pudo guardar la sesión");
+    }
+  }
+};
+
   return (
     <View style={styles.centeredContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {routine ? (
-          <Animated.View style={[styles.routineContainer, { opacity: fadeAnim }]}>
+          <Animated.View
+            style={[styles.routineContainer, { opacity: fadeAnim }]}
+          >
             <View style={styles.header}>
               <Text style={styles.routineName}>
                 {routine.name || "Rutina FullBody"}
@@ -157,7 +174,9 @@ const FullBodyRoutine = () => {
               <View style={styles.durationBadge}>
                 <Ionicons name="time-outline" size={16} color="#3b82f6" />
                 <Text style={styles.durationText}>
-                  {routine.duration ? `${routine.duration} mins` : "Duración no especificada"}
+                  {routine.duration
+                    ? `${routine.duration} mins`
+                    : "Duración no especificada"}
                 </Text>
               </View>
             </View>
@@ -175,7 +194,12 @@ const FullBodyRoutine = () => {
 
             {getExercisesData().map((exercise) => (
               <View key={exercise.id} style={styles.exerciseContainer}>
-                <View style={[styles.exerciseCardWrapper, { width: isWorkoutActive ? "90%" : "100%" }]}>
+                <View
+                  style={[
+                    styles.exerciseCardWrapper,
+                    { width: isWorkoutActive ? "90%" : "100%" },
+                  ]}
+                >
                   <ExerciseCard
                     icon={exercise.icon}
                     name={exercise.name}
@@ -193,7 +217,11 @@ const FullBodyRoutine = () => {
               </View>
             ))}
 
-            <WorkoutButton isActive={isWorkoutActive} onPress={toggleWorkout} />
+            <WorkoutButton
+              isActive={isWorkoutActive}
+              onPress={handlePress}
+              isLoading={isSaving}
+            />
 
             <Modal
               animationType="fade"
@@ -301,18 +329,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   exerciseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 12,
-    width: '100%',
+    width: "100%",
   },
   exerciseCardWrapper: {
     flex: 1,
   },
   progressText: {
-    color: '#3b82f6',
-    textAlign: 'center',
+    color: "#3b82f6",
+    textAlign: "center",
     marginVertical: 10,
     fontSize: 16,
   },

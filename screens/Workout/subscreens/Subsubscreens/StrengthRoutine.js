@@ -25,14 +25,17 @@ const StrengthRoutine = () => {
   const [currentImage, setCurrentImage] = useState("");
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
-  const {
+   const {
     isWorkoutActive,
     elapsedTime,
     formattedTime,
-    toggleWorkout,
+    handleWorkoutToggle, 
     completedExercises,
     toggleExerciseComplete,
+    isSaving,
+    completionPercentage, 
   } = useWorkoutTimer();
+
 
   const exercisesConfig = [
     {
@@ -104,13 +107,6 @@ const StrengthRoutine = () => {
     setImageModalVisible(true);
   };
 
-  const completionPercentage = useMemo(() => {
-    const exercises = getExercisesData();
-    if (!exercises.length) return 0;
-    const completedCount = Object.values(completedExercises).filter(Boolean).length;
-    return Math.round((completedCount / exercises.length) * 100);
-  }, [completedExercises, routine]);
-
   if (loading) {
     return (
       <View style={styles.centeredContainer}>
@@ -127,6 +123,25 @@ const StrengthRoutine = () => {
       </View>
     );
   }
+
+  const handlePress = async () => {
+  const result = await handleWorkoutToggle();
+  
+  if (result?.action === 'stop') {
+    if (result.success) {
+      navigation.navigate('Stats', { 
+        refresh: true,
+        workoutData: {
+          routineName: routine?.name || "Full Body",
+          ...result.workoutData
+        }
+      });
+    } else {
+      Alert.alert("Error", "No se pudo guardar la sesión");
+    }
+  }
+};
+
 
   return (
     <View style={styles.centeredContainer}>
@@ -179,7 +194,11 @@ const StrengthRoutine = () => {
               </View>
             ))}
 
-            <WorkoutButton isActive={isWorkoutActive} onPress={toggleWorkout} />
+            <WorkoutButton
+              isActive={isWorkoutActive}
+              onPress={handlePress}
+              isLoading={isSaving}
+            />
 
             <Modal
               animationType="fade"

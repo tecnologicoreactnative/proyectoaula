@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import {
   LineChart,
@@ -14,11 +15,39 @@ import {
   ProgressChart,
 } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
+import { getSessionsByMonth, getSessionsByDay } from "../../../utils/workoutStorage"; 
 
 const screenWidth = Dimensions.get("window").width;
 
-const StatsScreen = ({ navigation }) => {
-  // Configuración común mejorada
+const StatsScreen = ({ navigation, route }) => {
+  const [monthlyData, setMonthlyData] = useState(Array(12).fill(0));
+  const [dailyData, setDailyData] = useState(Array(7).fill(0));
+  const [loading, setLoading] = useState(true);
+
+  const loadStats = async () => {
+    setLoading(true);
+    try {
+      const [byMonth, byDay] = await Promise.all([
+        getSessionsByMonth(),
+        getSessionsByDay()
+      ]);
+      
+      setMonthlyData(byMonth);
+      setDailyData(byDay);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadStats);
+    loadStats(); // Carga inicial
+    
+    return unsubscribe;
+  }, [navigation, route.params?.refresh]);
+
   const sharedChartConfig = {
     backgroundColor: "#000",
     backgroundGradientFrom: "#1a1a1a",
@@ -29,13 +58,21 @@ const StatsScreen = ({ navigation }) => {
     propsForLabels: {
       fontSize: 10,
       fontWeight: "bold",
-      dx: -5, // Desplazamiento horizontal de labels
+      dx: -5,
     },
     style: {
       borderRadius: 16,
-      marginLeft: -15, // Compensación izquierda
+      marginLeft: -15,
     },
   };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color="#3b82f6" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -55,69 +92,52 @@ const StatsScreen = ({ navigation }) => {
         <Text style={styles.chartTitle}>Sesiones por mes</Text>
         <LineChart
           data={{
-            labels: [
-              "Ene",
-              "Feb",
-              "Mar",
-              "Abr",
-              "May",
-              "Jun",
-              "Jul",
-              "Ago",
-              "Sep",
-              "Oct",
-              "Nov",
-              "Dic",
-            ],
-            datasets: [
-              {
-                data: [20, 45, 28, 80, 99, 43, 50, 60, 70, 80, 90, 100],
-                color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
-              },
-            ],
+            labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+            datasets: [{
+              data: monthlyData,
+              color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
+            }],
           }}
-          width={screenWidth - 10} // Ajuste fino del ancho
+          width={screenWidth - 10}
           height={220}
           chartConfig={{
             ...sharedChartConfig,
             propsForLabels: {
               ...sharedChartConfig.propsForLabels,
-              fontSize: 8, // Tamaño reducido para caber todos
+              fontSize: 8,
             },
           }}
           bezier
           withHorizontalLabels={true}
           withVerticalLabels={true}
-          style={[styles.chart, { marginLeft: -20 }]} // Mayor compensación
+          style={[styles.chart, { marginLeft: -20 }]}
         />
       </View>
 
-      {/* Gráfico de Sesiones por Día - AJUSTE DE ANCHO */}
+      {/* Gráfico de Sesiones por Día */}
       <View style={styles.chartContainer}>
         <Text style={styles.chartTitle}>Sesiones por día</Text>
         <BarChart
           data={{
             labels: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
-            datasets: [
-              {
-                data: [15, 20, 45, 28, 80, 99, 43],
-              },
-            ],
+            datasets: [{
+              data: dailyData,
+            }],
           }}
           width={screenWidth - 15}
           height={220}
           chartConfig={{
             ...sharedChartConfig,
-            barPercentage: 0.4, // Barras más delgadas
+            barPercentage: 0.4,
             fillShadowGradient: "#007AFF",
             propsForLabels: {
               ...sharedChartConfig.propsForLabels,
-              dx: -1, // Mayor desplazamiento izquierdo
+              dx: -1,
             },
           }}
-          verticalLabelRotation={0} // Labels horizontales
+          verticalLabelRotation={0}
           fromZero
-          style={[styles.chart, { marginLeft: -25 }]} // Compensación adicional
+          style={[styles.chart, { marginLeft: -25 }]}
           showValuesOnTopOfBars={true}
         />
       </View>
@@ -131,8 +151,8 @@ const StatsScreen = ({ navigation }) => {
               name: "Pecho",
               population: 25,
               color: "#FF6384",
-              legendFontColor: "#FFF", // Color blanco para mejor contraste
-              legendFontSize: 12, // Tamaño aumentado
+              legendFontColor: "#FFF",
+              legendFontSize: 12, 
             },
             {
               name: "Piernas",
@@ -157,15 +177,15 @@ const StatsScreen = ({ navigation }) => {
             },
           ]}
           width={screenWidth - 32}
-          height={220} // Altura aumentada
+          height={220} 
           chartConfig={{
             ...sharedChartConfig,
             color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           }}
           accessor="population"
           backgroundColor="transparent"
-          paddingLeft="0" // Eliminamos padding izquierdo
-          center={[10, 10]} // Ajuste de posición central
+          paddingLeft="0" 
+          center={[10, 10]} 
           absolute
           style={styles.chart}
           avoidFalseZero
@@ -220,7 +240,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
-    overflow: "visible", // Permite que los labels se extiendan
+    overflow: "visible",
   },
   chartTitle: {
     fontSize: 18,

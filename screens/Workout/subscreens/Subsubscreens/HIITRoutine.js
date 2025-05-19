@@ -29,44 +29,51 @@ const HIITRoutine = () => {
     isWorkoutActive,
     elapsedTime,
     formattedTime,
-    toggleWorkout,
+    handleWorkoutToggle,
     completedExercises,
     toggleExerciseComplete,
+    isSaving,
+    completionPercentage,
   } = useWorkoutTimer();
 
- const exercisesConfig = [
+  const exercisesConfig = [
     {
       id: "ejercicio1",
       icon: "barbell",
-      image: "https://www.elindependiente.com/wp-content/uploads/2024/05/captura-de-pantalla-2024-05-21-a-las-182231.png",
+      image:
+        "https://www.elindependiente.com/wp-content/uploads/2024/05/captura-de-pantalla-2024-05-21-a-las-182231.png",
       series: 8,
       reps: 10,
     },
     {
       id: "ejercicio2",
       icon: "body",
-      image: "https://s2.abcstatics.com/media/bienestar/2020/04/08/jumping-jack-2-k8hE--510x349@abc.jpeg",
+      image:
+        "https://s2.abcstatics.com/media/bienestar/2020/04/08/jumping-jack-2-k8hE--510x349@abc.jpeg",
       series: 8,
       reps: 10,
     },
     {
       id: "ejercicio3",
       icon: "fitness",
-      image: "https://t3.ftcdn.net/jpg/04/85/26/50/360_F_485265082_XHMjXuKYEnxlI5ybgKr6rfAJSqR33WRA.jpg",
+      image:
+        "https://t3.ftcdn.net/jpg/04/85/26/50/360_F_485265082_XHMjXuKYEnxlI5ybgKr6rfAJSqR33WRA.jpg",
       series: 8,
       reps: 10,
     },
     {
       id: "ejercicio4",
       icon: "fitness",
-      image: "https://static.vecteezy.com/system/resources/previews/008/635/521/non_2x/woman-doing-jump-squats-exercise-flat-illustration-isolated-on-white-background-vector.jpg",
+      image:
+        "https://static.vecteezy.com/system/resources/previews/008/635/521/non_2x/woman-doing-jump-squats-exercise-flat-illustration-isolated-on-white-background-vector.jpg",
       series: 8,
       reps: 10,
     },
     {
       id: "ejercicio5",
       icon: "fitness",
-      image: "https://i.pinimg.com/564x/a2/e7/e2/a2e7e2fb70013dac2054b5e0c17bd5f6.jpg",
+      image:
+        "https://i.pinimg.com/564x/a2/e7/e2/a2e7e2fb70013dac2054b5e0c17bd5f6.jpg",
       series: 8,
       reps: 10,
     },
@@ -75,7 +82,9 @@ const HIITRoutine = () => {
     if (!routine) return [];
     return exercisesConfig.map((exercise) => ({
       ...exercise,
-      name: routine[exercise.id] || `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
+      name:
+        routine[exercise.id] ||
+        `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
     }));
   };
 
@@ -104,13 +113,6 @@ const HIITRoutine = () => {
     setImageModalVisible(true);
   };
 
-  const completionPercentage = useMemo(() => {
-    const exercises = getExercisesData();
-    if (!exercises.length) return 0;
-    const completedCount = Object.values(completedExercises).filter(Boolean).length;
-    return Math.round((completedCount / exercises.length) * 100);
-  }, [completedExercises, routine]);
-
   if (loading) {
     return (
       <View style={styles.centeredContainer}>
@@ -128,11 +130,31 @@ const HIITRoutine = () => {
     );
   }
 
+  const handlePress = async () => {
+    const result = await handleWorkoutToggle();
+
+    if (result?.action === "stop") {
+      if (result.success) {
+        navigation.navigate("Stats", {
+          refresh: true,
+          workoutData: {
+            routineName: routine?.name || "Full Body",
+            ...result.workoutData,
+          },
+        });
+      } else {
+        Alert.alert("Error", "No se pudo guardar la sesión");
+      }
+    }
+  };
+
   return (
     <View style={styles.centeredContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {routine ? (
-          <Animated.View style={[styles.routineContainer, { opacity: fadeAnim }]}>
+          <Animated.View
+            style={[styles.routineContainer, { opacity: fadeAnim }]}
+          >
             <View style={styles.header}>
               <Text style={styles.routineName}>
                 {routine.name || "Rutina HIIT"}
@@ -143,7 +165,9 @@ const HIITRoutine = () => {
               <View style={styles.durationBadge}>
                 <Ionicons name="time-outline" size={16} color="#3b82f6" />
                 <Text style={styles.durationText}>
-                  {routine.duration ? `${routine.duration} mins` : "Duración no especificada"}
+                  {routine.duration
+                    ? `${routine.duration} mins`
+                    : "Duración no especificada"}
                 </Text>
               </View>
             </View>
@@ -161,7 +185,12 @@ const HIITRoutine = () => {
 
             {getExercisesData().map((exercise) => (
               <View key={exercise.id} style={styles.exerciseContainer}>
-                <View style={[styles.exerciseCardWrapper, { width: isWorkoutActive ? "90%" : "100%" }]}>
+                <View
+                  style={[
+                    styles.exerciseCardWrapper,
+                    { width: isWorkoutActive ? "90%" : "100%" },
+                  ]}
+                >
                   <ExerciseCard
                     icon={exercise.icon}
                     name={exercise.name}
@@ -179,7 +208,11 @@ const HIITRoutine = () => {
               </View>
             ))}
 
-            <WorkoutButton isActive={isWorkoutActive} onPress={toggleWorkout} />
+            <WorkoutButton
+              isActive={isWorkoutActive}
+              onPress={handlePress}
+              isLoading={isSaving}
+            />
 
             <Modal
               animationType="fade"
@@ -287,18 +320,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   exerciseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 12,
-    width: '100%',
+    width: "100%",
   },
   exerciseCardWrapper: {
     flex: 1,
   },
   progressText: {
-    color: '#3b82f6',
-    textAlign: 'center',
+    color: "#3b82f6",
+    textAlign: "center",
     marginVertical: 10,
     fontSize: 16,
   },
