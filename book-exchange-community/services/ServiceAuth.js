@@ -34,9 +34,13 @@ export function useLogin() {
         case 'auth/invalid-email':
           Alert.alert('Error', 'Correo electrónico inválido');
           break;
+          case 'auth/invalid-credential':
+         Alert.alert('Error', 'Contraseña inválida');
+        break;
         default:
-          Alert.alert('Error', error.message);
-      }
+        Alert.alert('Error', 'No se pudo iniciar sesión');
+           
+        }
       return false;
     }
   };
