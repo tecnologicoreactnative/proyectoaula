@@ -14,10 +14,7 @@ import ExerciseCard from "../../../components/workout/ExerciseCard";
 const ExercisesListScreen = ({ navigation }) => {
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
-
-  // Combinamos los ejercicios de FullBody y PushPullLegs
   const exercisesConfig = [
-    // Ejercicios de PushPullLegs
     {
       id: "ejercicio1",
       icon: "barbell",
@@ -68,7 +65,6 @@ const ExercisesListScreen = ({ navigation }) => {
       exerciseType: "resistencia",
       name: "Extensiones de Tríceps"
     },
-    // Ejercicios de FullBody
     {
       id: "ejercicio6",
       icon: "barbell",
@@ -381,7 +377,6 @@ const ExercisesListScreen = ({ navigation }) => {
   }
   ];
 
-  // Función para agrupar ejercicios por grupo muscular
   const groupByMuscleGroup = () => {
     const grouped = {};
     exercisesConfig.forEach(exercise => {
@@ -465,7 +460,6 @@ const ExercisesListScreen = ({ navigation }) => {
   );
 };
 
-// Estilos (igual que en el ejemplo anterior)
 const styles = StyleSheet.create({
   centeredContainer: {
     flex: 1,

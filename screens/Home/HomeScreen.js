@@ -194,7 +194,7 @@ const HomeScreen = () => {
                   <View style={styles.searchResultsContainer}>
                     {searchResults.map((item, index) => (
                       <TouchableOpacity
-                        key={index} // No ideal, pero funciona si no tienes ids únicos
+                        key={index} 
                         style={styles.resultItem}
                         onPress={() => navigateToRoutine(item.name)}
                       >
@@ -334,17 +334,17 @@ const styles = StyleSheet.create({
   },
   searchResultsContainer: {
   width: "90%",
-  maxHeight: 200, // Altura máxima fija para el contenedor
+  maxHeight: 200, 
   backgroundColor: "#1a1a1a",
   borderRadius: 10,
   borderWidth: 1,
   borderColor: "#3498db",
   alignSelf: "center",
   marginTop: -20,
-  overflow: 'hidden', // Importante para que el borde redondeado funcione
+  overflow: 'hidden', 
 },
 searchResultsScroll: {
-  flexGrow: 1, // Permite que el ScrollView ocupe todo el espacio disponible
+  flexGrow: 1, 
 },
 resultItem: {
   padding: 15,
