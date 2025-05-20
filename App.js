@@ -14,7 +14,7 @@ export default function App() {
           <NavigationContainer
             theme={{
               colors: {
-                background: "black", // o el color de tu app
+                background: "black",
               },
             }}
           >
