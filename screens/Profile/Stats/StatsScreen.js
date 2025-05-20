@@ -51,8 +51,7 @@ const StatsScreen = ({ navigation, route }) => {
       
       setMonthlyData(byMonth);
       setDailyData(byDay);
-      
-      // Calcular distribución de músculos
+
       const muscles = {};
       const types = {};
       
@@ -103,17 +102,15 @@ const StatsScreen = ({ navigation, route }) => {
       name: name.charAt(0).toUpperCase() + name.slice(1),
       population: value,
       color: colors[name.toLowerCase()] || `#${Math.floor(Math.random()*16777215).toString(16)}`,
-      legendFontColor: "#FFFFFF",  // Blanco para mejor contraste
+      legendFontColor: "#FFFFFF",  
       legendFontSize: 12,
-      labelColor: "#FFFFFF"        // Color para labels internos
+      labelColor: "#FFFFFF"       
     }));
 };
 
-  // Función para transformar datos de tipos de ejercicio al formato de ProgressChart
  const getExerciseTypesChartData = () => {
     const types = ["fuerza", "resistencia", "flexibilidad", "cardio"];
     
-    // If no data, return equal distribution
     if (!exerciseTypesData || Object.keys(exerciseTypesData).length === 0) {
       return {
         labels: types.map(t => t.charAt(0).toUpperCase() + t.slice(1)),
@@ -132,7 +129,7 @@ const StatsScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', loadStats);
-    loadStats(); // Carga inicial
+    loadStats(); 
     
     return unsubscribe;
   }, [navigation, route.params?.refresh]);
@@ -231,7 +228,7 @@ const StatsScreen = ({ navigation, route }) => {
         />
       </View>
 
-     {/* Gráfico de Distribución de ejercicios (actualizado) */}
+     {/* Gráfico de Distribución de ejercicios */}
       <View style={styles.chartContainer}>
         <Text style={styles.chartTitle}>Distribución de ejercicios</Text>
         <PieChart
@@ -249,7 +246,7 @@ const StatsScreen = ({ navigation, route }) => {
         />
       </View>
 
-      {/* Gráfico de Progreso general (actualizado) */}
+      {/* Gráfico de Progreso general */}
       <View style={styles.chartContainer}>
         <Text style={styles.chartTitle}>Progreso general</Text>
         <ProgressChart

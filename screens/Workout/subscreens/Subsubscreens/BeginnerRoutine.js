@@ -32,8 +32,8 @@ const BeginnerRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/bodyweight-squat/bodyweight-squat-800.jpg",
       series: 3,
       reps: 12,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas", 
+      exerciseType: "resistencia", 
     },
     {
       id: "ejercicio2",
@@ -41,8 +41,8 @@ const BeginnerRoutine = () => {
       image: "https://liftmanual.com/wp-content/uploads/2023/04/kneeling-push-up.jpg",
       series: 3,
       reps: 8,
-      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "brazos", 
+      exerciseType: "fuerza", 
     },
     {
       id: "ejercicio3",
@@ -50,8 +50,8 @@ const BeginnerRoutine = () => {
       image: "https://www.wellcentro.com/wp-content/uploads/2019/11/plancha-abdominal-1.jpg",
       series: 3,
       reps: 30,
-      muscleGroup: "pecho", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "pecho", 
+      exerciseType: "resistencia", 
     },
     {
       id: "ejercicio4",
@@ -59,8 +59,8 @@ const BeginnerRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/glute-bridge/glute-bridge-800.jpg",
       series: 3,
       reps: 12,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "flexibilidad", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas", 
+      exerciseType: "flexibilidad", 
     },
     {
       id: "ejercicio5",
@@ -68,8 +68,8 @@ const BeginnerRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/inverted-row/inverted-row-800.jpg",
       series: 3,
       reps: 8,
-      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "espalda", 
+      exerciseType: "resistencia", 
     },
   ],[]);
 

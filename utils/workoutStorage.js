@@ -14,10 +14,8 @@ export const getWorkoutSessions = async () => {
 
 export const saveWorkoutSession = async (session) => {
   try {
-    // First get existing sessions
     const existingSessions = await getWorkoutSessions();
-    
-    // Validate session data
+
     if (!session || !session.startTime) {
       throw new Error('Invalid session data');
     }
@@ -51,7 +49,6 @@ export const getSessionsByDay = async () => {
       }
     });
     
-    // Reorder to start with Monday
     return [...days.slice(1), days[0]];
   } catch (error) {
     console.error('Error getting sessions by day:', error);

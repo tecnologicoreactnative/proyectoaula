@@ -32,8 +32,8 @@ const PushPullLegsRoutine = () => {
       image: "https://i.pinimg.com/474x/82/1b/20/821b20858c969fe48cd2c6a7d243ab22.jpg",
       series: 4,
       reps: 8,
-      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+      muscleGroup: "brazos",
+      exerciseType: "fuerza",
     },
     {
       id: "ejercicio2",
@@ -41,8 +41,8 @@ const PushPullLegsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/military-press/military-press-800.jpg",
       series: 3,
       reps: 10,
-      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+      muscleGroup: "brazos",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio3",
@@ -50,8 +50,8 @@ const PushPullLegsRoutine = () => {
       image: "https://www.feda.net/wp-content/uploads/2019/02/dip.jpg",
       series: 3,
       reps: 12,
-      muscleGroup: "pecho", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+      muscleGroup: "pecho",
+      exerciseType: "fuerza",
     },
     {
       id: "ejercicio4",
@@ -59,8 +59,8 @@ const PushPullLegsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/dumbbell-lateral-raise/dumbbell-lateral-raise-800.jpg",
       series: 3,
       reps: 15,
-      muscleGroup: "hombros", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+      muscleGroup: "hombros",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio5",
@@ -68,10 +68,10 @@ const PushPullLegsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/seated-dumbbell-tricep-extension/seated-dumbbell-tricep-extension-800.jpg",
       series: 3,
       reps: 12,
-      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+      muscleGroup: "brazos",
+      exerciseType: "resistencia",
     },
-  ],[]);
+  ], []);
 
   const {
     isWorkoutActive,

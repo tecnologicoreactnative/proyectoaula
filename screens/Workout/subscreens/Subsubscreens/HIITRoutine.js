@@ -26,57 +26,52 @@ const HIITRoutine = () => {
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
   const exercisesConfig = useMemo(() => [
-  {
+    {
       id: "ejercicio1",
       icon: "barbell",
-      image:
-        "https://www.elindependiente.com/wp-content/uploads/2024/05/captura-de-pantalla-2024-05-21-a-las-182231.png",
+      image: "https://www.elindependiente.com/wp-content/uploads/2024/05/captura-de-pantalla-2024-05-21-a-las-182231.png",
       series: 8,
       reps: 10,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "cardio", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas",
+      exerciseType: "cardio",
     },
     {
       id: "ejercicio2",
       icon: "body",
-      image:
-        "https://s2.abcstatics.com/media/bienestar/2020/04/08/jumping-jack-2-k8hE--510x349@abc.jpeg",
+      image: "https://s2.abcstatics.com/media/bienestar/2020/04/08/jumping-jack-2-k8hE--510x349@abc.jpeg",
       series: 8,
       reps: 10,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "cardio", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas",
+      exerciseType: "cardio",
     },
     {
       id: "ejercicio3",
       icon: "fitness",
-      image:
-        "https://t3.ftcdn.net/jpg/04/85/26/50/360_F_485265082_XHMjXuKYEnxlI5ybgKr6rfAJSqR33WRA.jpg",
+      image: "https://t3.ftcdn.net/jpg/04/85/26/50/360_F_485265082_XHMjXuKYEnxlI5ybgKr6rfAJSqR33WRA.jpg",
       series: 8,
       reps: 10,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "cardio", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas",
+      exerciseType: "cardio",
     },
     {
       id: "ejercicio4",
       icon: "fitness",
-      image:
-        "https://static.vecteezy.com/system/resources/previews/008/635/521/non_2x/woman-doing-jump-squats-exercise-flat-illustration-isolated-on-white-background-vector.jpg",
+      image: "https://static.vecteezy.com/system/resources/previews/008/635/521/non_2x/woman-doing-jump-squats-exercise-flat-illustration-isolated-on-white-background-vector.jpg",
       series: 8,
       reps: 10,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "cardio", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas",
+      exerciseType: "cardio",
     },
     {
       id: "ejercicio5",
       icon: "fitness",
-      image:
-        "https://i.pinimg.com/564x/a2/e7/e2/a2e7e2fb70013dac2054b5e0c17bd5f6.jpg",
+      image: "https://i.pinimg.com/564x/a2/e7/e2/a2e7e2fb70013dac2054b5e0c17bd5f6.jpg",
       series: 8,
       reps: 10,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas",
+      exerciseType: "resistencia",
     },
-  ],[]);
+  ], []);
 
   const {
     isWorkoutActive,

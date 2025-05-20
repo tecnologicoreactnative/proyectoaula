@@ -8,9 +8,9 @@ import { getWorkoutSessions } from "../../utils/workoutStorage";
 
 const WorkoutScreen = () => {
   const navigation = useNavigation();
-  const isFocused = useIsFocused(); // Hook para detectar cuando la pantalla está enfocada
+  const isFocused = useIsFocused(); 
   const [muscleGroupsData, setMuscleGroupsData] = useState({});
-  const [refreshKey, setRefreshKey] = useState(0); // Clave para forzar re-render
+  const [refreshKey, setRefreshKey] = useState(0); 
 
   const loadMuscleDistribution = async () => {
     try {
@@ -30,15 +30,15 @@ const WorkoutScreen = () => {
   };
 
   useEffect(() => {
-    if (isFocused) { // Solo cargar cuando la pantalla está enfocada
+    if (isFocused) { 
       loadMuscleDistribution();
     }
-  }, [isFocused, refreshKey]); // Se ejecutará cuando la pantalla gane foco o refreshKey cambie
+  }, [isFocused, refreshKey]); 
 
-  // Escucha cambios en los parámetros de navegación
+ 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setRefreshKey(prev => prev + 1); // Incrementa la clave para forzar actualización
+      setRefreshKey(prev => prev + 1); 
     });
 
     return unsubscribe;
@@ -58,7 +58,7 @@ const WorkoutScreen = () => {
         <View style={{ marginTop: 80 }}>
         <MuscleDistributionChart 
           muscleGroupsData={muscleGroupsData} 
-          key={refreshKey} // Forzar recreación del componente cuando refreshKey cambie
+          key={refreshKey} 
         />
         <Text style={{ color: "white", textAlign: "center", marginBottom: 10 }}>
           Distribución de grupos musculares trabajados por sesión finalizada.

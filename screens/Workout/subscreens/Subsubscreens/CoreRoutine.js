@@ -26,14 +26,14 @@ const CoreRoutine = () => {
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
   const exercisesConfig = useMemo(() => [
- {
+    {
       id: "ejercicio1",
       icon: "barbell",
       image: "https://static.strengthlevel.com/images/exercises/crunches/crunches-800.jpg",
       series: 3,
       reps: 15,
-      muscleGroup: "abdomen", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "abdomen",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio2",
@@ -41,8 +41,8 @@ const CoreRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/lying-leg-raise/lying-leg-raise-800.jpg",
       series: 3,
       reps: 12,
-      muscleGroup: "abdomen", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "abdomen",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio3",
@@ -50,8 +50,8 @@ const CoreRoutine = () => {
       image: "https://liftmanual.com/wp-content/uploads/2023/04/russian-twist.jpg",
       series: 3,
       reps: 20,
-      muscleGroup: "abdomen", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "abdomen",
+      exerciseType: "fuerza",
     },
     {
       id: "ejercicio4",
@@ -59,8 +59,8 @@ const CoreRoutine = () => {
       image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhZQi0Nx42uHU6Ex4ix3ZclI_5gXhWPvYZDSi580Dm7g_KwRaopz8Aeq-6Mlbm5pXFlNaA-uEbh2jWDSYMl6vRcxmmJpbVNNXXeKo4J_Yjbup4Xys0Y1-_FTsZ9rNNfcoHJqteVaNHRLr8/s1600/plancha-lateral.jpg",
       series: 3,
       reps: 30,
-      muscleGroup: "abdomen", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "abdomen",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio5",
@@ -68,10 +68,10 @@ const CoreRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/bicycle-crunch/bicycle-crunch-800.jpg",
       series: 3,
       reps: 20,
-      muscleGroup: "abdomen", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "abdomen",
+      exerciseType: "fuerza",
     },
-  ],[]);
+  ], []);
 
   const {
     isWorkoutActive,

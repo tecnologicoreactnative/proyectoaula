@@ -26,14 +26,14 @@ const CalisthenicsRoutine = () => {
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
   const exercisesConfig = useMemo(() => [
-  {
+    {
       id: "ejercicio1",
       icon: "barbell",
       image: "https://static.strengthlevel.com/images/exercises/pull-ups/pull-ups-800.jpg",
       series: 4,
       reps: 8,
-      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "espalda",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio2",
@@ -41,8 +41,8 @@ const CalisthenicsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/dips/dips-800.jpg",
       series: 3,
       reps: 10,
-      muscleGroup: "pecho", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "pecho",
+      exerciseType: "fuerza",
     },
     {
       id: "ejercicio3",
@@ -50,8 +50,8 @@ const CalisthenicsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/pistol-squat/pistol-squat-800.jpg",
       series: 3,
       reps: 12,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "flexibilidad", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas",
+      exerciseType: "flexibilidad",
     },
     {
       id: "ejercicio4",
@@ -59,8 +59,8 @@ const CalisthenicsRoutine = () => {
       image: "https://i.pinimg.com/736x/6a/10/88/6a1088ce52211491912ed45a0463178e.jpg",
       series: 3,
       reps: 5,
-      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "flexibilidad", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "espalda",
+      exerciseType: "flexibilidad",
     },
     {
       id: "ejercicio5",
@@ -68,10 +68,10 @@ const CalisthenicsRoutine = () => {
       image: "https://calistenia.es/wp-content/uploads/2024/02/imagen-51.png",
       series: 3,
       reps: 5,
-      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "brazos",
+      exerciseType: "resistencia",
     },
-  ],[]);
+  ], []);
 
   const {
     isWorkoutActive,

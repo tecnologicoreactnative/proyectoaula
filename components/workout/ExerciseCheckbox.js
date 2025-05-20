@@ -1,4 +1,4 @@
-// components/workout/ExerciseCheckbox.js
+
 import React from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

@@ -26,14 +26,14 @@ const StrengthRoutine = () => {
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
   const exercisesConfig = useMemo(() => [
-   {
+    {
       id: "ejercicio1",
       icon: "barbell",
       image: "https://static.strengthlevel.com/images/exercises/squat/squat-800.jpg",
       series: 5,
       reps: 5,
-      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "piernas",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio2",
@@ -41,8 +41,8 @@ const StrengthRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/bench-press/bench-press-800.jpg",
       series: 5,
       reps: 5,
-      muscleGroup: "pecho", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "pecho",
+      exerciseType: "fuerza",
     },
     {
       id: "ejercicio3",
@@ -50,8 +50,8 @@ const StrengthRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/stiff-leg-deadlift/stiff-leg-deadlift-800.jpg",
       series: 5,
       reps: 5,
-      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "espalda",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio4",
@@ -59,8 +59,8 @@ const StrengthRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/military-press/military-press-800.jpg",
       series: 5,
       reps: 5,
-      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "brazos",
+      exerciseType: "resistencia",
     },
     {
       id: "ejercicio5",
@@ -68,10 +68,10 @@ const StrengthRoutine = () => {
       image: "https://www.inspireusafoundation.org/wp-content/uploads/2022/11/barbell-row-benefits.jpg",
       series: 5,
       reps: 5,
-      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
-      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
+      muscleGroup: "espalda",
+      exerciseType: "fuerza",
     },
-  ],[]);
+  ], []);
 
   const {
     isWorkoutActive,
