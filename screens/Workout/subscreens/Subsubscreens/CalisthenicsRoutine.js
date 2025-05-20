@@ -25,25 +25,15 @@ const CalisthenicsRoutine = () => {
   const [currentImage, setCurrentImage] = useState("");
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
-  const {
-    isWorkoutActive,
-    elapsedTime,
-    formattedTime,
-    handleWorkoutToggle, 
-    completedExercises,
-    toggleExerciseComplete,
-    isSaving,
-    completionPercentage, 
-  } = useWorkoutTimer();
-
-
-  const exercisesConfig = [
-    {
+  const exercisesConfig = useMemo(() => [
+  {
       id: "ejercicio1",
       icon: "barbell",
       image: "https://static.strengthlevel.com/images/exercises/pull-ups/pull-ups-800.jpg",
       series: 4,
       reps: 8,
+      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
     },
     {
       id: "ejercicio2",
@@ -51,6 +41,8 @@ const CalisthenicsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/dips/dips-800.jpg",
       series: 3,
       reps: 10,
+      muscleGroup: "pecho", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
     },
     {
       id: "ejercicio3",
@@ -58,6 +50,8 @@ const CalisthenicsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/pistol-squat/pistol-squat-800.jpg",
       series: 3,
       reps: 12,
+      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "flexibilidad", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
     },
     {
       id: "ejercicio4",
@@ -65,6 +59,8 @@ const CalisthenicsRoutine = () => {
       image: "https://i.pinimg.com/736x/6a/10/88/6a1088ce52211491912ed45a0463178e.jpg",
       series: 3,
       reps: 5,
+      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "flexibilidad", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
     },
     {
       id: "ejercicio5",
@@ -72,14 +68,30 @@ const CalisthenicsRoutine = () => {
       image: "https://calistenia.es/wp-content/uploads/2024/02/imagen-51.png",
       series: 3,
       reps: 5,
+      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad
     },
-  ];
+  ],[]);
+
+  const {
+    isWorkoutActive,
+    elapsedTime,
+    formattedTime,
+    handleWorkoutToggle,
+    completedExercises,
+    toggleExerciseComplete,
+    isSaving,
+    completionPercentage,
+    completedExercisesData,
+  } = useWorkoutTimer(exercisesConfig);
 
   const getExercisesData = () => {
     if (!routine) return [];
     return exercisesConfig.map((exercise) => ({
       ...exercise,
-      name: routine[exercise.id] || `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
+      name:
+        routine[exercise.id] ||
+        `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
     }));
   };
 
@@ -125,7 +137,7 @@ const CalisthenicsRoutine = () => {
     );
   }
 
-  const handlePress = async () => {
+const handlePress = async () => {
   const result = await handleWorkoutToggle();
   
   if (result?.action === 'stop') {
@@ -133,8 +145,10 @@ const CalisthenicsRoutine = () => {
       navigation.navigate('Stats', { 
         refresh: true,
         workoutData: {
-          routineName: routine?.name || "Calistenia",
-          ...result.workoutData
+          routineName: routine?.name || "CalisthenicsRoutine",
+          ...result.workoutData,
+          muscleGroups: completedExercisesData.muscleGroups,
+          exerciseTypes: completedExercisesData.exerciseTypes
         }
       });
     } else {
@@ -143,15 +157,16 @@ const CalisthenicsRoutine = () => {
   }
 };
 
-
   return (
     <View style={styles.centeredContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {routine ? (
-          <Animated.View style={[styles.routineContainer, { opacity: fadeAnim }]}>
+          <Animated.View
+            style={[styles.routineContainer, { opacity: fadeAnim }]}
+          >
             <View style={styles.header}>
               <Text style={styles.routineName}>
-                {routine.name || "Rutina Calisthenics"}
+                {routine.name || "Rutina FullBody"}
               </Text>
               <Text style={styles.routineDescription}>
                 {routine.descripcion || "Descripción no disponible"}
@@ -159,7 +174,9 @@ const CalisthenicsRoutine = () => {
               <View style={styles.durationBadge}>
                 <Ionicons name="time-outline" size={16} color="#3b82f6" />
                 <Text style={styles.durationText}>
-                  {routine.duration ? `${routine.duration} mins` : "Duración no especificada"}
+                  {routine.duration
+                    ? `${routine.duration} mins`
+                    : "Duración no especificada"}
                 </Text>
               </View>
             </View>
@@ -177,7 +194,12 @@ const CalisthenicsRoutine = () => {
 
             {getExercisesData().map((exercise) => (
               <View key={exercise.id} style={styles.exerciseContainer}>
-                <View style={[styles.exerciseCardWrapper, { width: isWorkoutActive ? "90%" : "100%" }]}>
+                <View
+                  style={[
+                    styles.exerciseCardWrapper,
+                    { width: isWorkoutActive ? "90%" : "100%" },
+                  ]}
+                >
                   <ExerciseCard
                     icon={exercise.icon}
                     name={exercise.name}
@@ -239,7 +261,6 @@ const CalisthenicsRoutine = () => {
   );
 };
 
-// Reuse the same styles from FullBodyRoutine.js
 const styles = StyleSheet.create({
   centeredContainer: {
     flex: 1,
@@ -308,18 +329,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   exerciseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 12,
-    width: '100%',
+    width: "100%",
   },
   exerciseCardWrapper: {
     flex: 1,
   },
   progressText: {
-    color: '#3b82f6',
-    textAlign: 'center',
+    color: "#3b82f6",
+    textAlign: "center",
     marginVertical: 10,
     fontSize: 16,
   },

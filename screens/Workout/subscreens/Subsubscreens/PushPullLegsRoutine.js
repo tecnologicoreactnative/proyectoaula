@@ -25,24 +25,15 @@ const PushPullLegsRoutine = () => {
   const [currentImage, setCurrentImage] = useState("");
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
-   const {
-    isWorkoutActive,
-    elapsedTime,
-    formattedTime,
-    handleWorkoutToggle, 
-    completedExercises,
-    toggleExerciseComplete,
-    isSaving,
-    completionPercentage, 
-  } = useWorkoutTimer();
-
-  const exercisesConfig = [
+  const exercisesConfig = useMemo(() => [
     {
       id: "ejercicio1",
       icon: "barbell",
       image: "https://i.pinimg.com/474x/82/1b/20/821b20858c969fe48cd2c6a7d243ab22.jpg",
       series: 4,
       reps: 8,
+      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
     },
     {
       id: "ejercicio2",
@@ -50,6 +41,8 @@ const PushPullLegsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/military-press/military-press-800.jpg",
       series: 3,
       reps: 10,
+      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
     },
     {
       id: "ejercicio3",
@@ -57,6 +50,8 @@ const PushPullLegsRoutine = () => {
       image: "https://www.feda.net/wp-content/uploads/2019/02/dip.jpg",
       series: 3,
       reps: 12,
+      muscleGroup: "pecho", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
     },
     {
       id: "ejercicio4",
@@ -64,6 +59,8 @@ const PushPullLegsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/dumbbell-lateral-raise/dumbbell-lateral-raise-800.jpg",
       series: 3,
       reps: 15,
+      muscleGroup: "hombros", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
     },
     {
       id: "ejercicio5",
@@ -71,14 +68,30 @@ const PushPullLegsRoutine = () => {
       image: "https://static.strengthlevel.com/images/exercises/seated-dumbbell-tricep-extension/seated-dumbbell-tricep-extension-800.jpg",
       series: 3,
       reps: 12,
+      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
     },
-  ];
+  ],[]);
+
+  const {
+    isWorkoutActive,
+    elapsedTime,
+    formattedTime,
+    handleWorkoutToggle,
+    completedExercises,
+    toggleExerciseComplete,
+    isSaving,
+    completionPercentage,
+    completedExercisesData,
+  } = useWorkoutTimer(exercisesConfig);
 
   const getExercisesData = () => {
     if (!routine) return [];
     return exercisesConfig.map((exercise) => ({
       ...exercise,
-      name: routine[exercise.id] || `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
+      name:
+        routine[exercise.id] ||
+        `Ejercicio ${exercise.id.replace("ejercicio", "")}`,
     }));
   };
 
@@ -124,32 +137,36 @@ const PushPullLegsRoutine = () => {
     );
   }
 
-    const handlePress = async () => {
-    try {
-      const result = await handleWorkoutToggle();
-      
-      if (result?.action === 'stop') {
-        navigation.navigate('Stats', { 
-          refresh: true,
-          workoutData: {
-            routineName: routine?.name || "Push Pull Legs",
-            ...result.workoutData
-          }
-        });
-      }
-    } catch (error) {
+const handlePress = async () => {
+  const result = await handleWorkoutToggle();
+  
+  if (result?.action === 'stop') {
+    if (result.success) {
+      navigation.navigate('Stats', { 
+        refresh: true,
+        workoutData: {
+          routineName: routine?.name || "PushPullLegsRoutine",
+          ...result.workoutData,
+          muscleGroups: completedExercisesData.muscleGroups,
+          exerciseTypes: completedExercisesData.exerciseTypes
+        }
+      });
+    } else {
       Alert.alert("Error", "No se pudo guardar la sesión");
     }
-  };
+  }
+};
 
   return (
     <View style={styles.centeredContainer}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {routine ? (
-          <Animated.View style={[styles.routineContainer, { opacity: fadeAnim }]}>
+          <Animated.View
+            style={[styles.routineContainer, { opacity: fadeAnim }]}
+          >
             <View style={styles.header}>
               <Text style={styles.routineName}>
-                {routine.name || "Rutina PushPullLegs"}
+                {routine.name || "Rutina FullBody"}
               </Text>
               <Text style={styles.routineDescription}>
                 {routine.descripcion || "Descripción no disponible"}
@@ -157,7 +174,9 @@ const PushPullLegsRoutine = () => {
               <View style={styles.durationBadge}>
                 <Ionicons name="time-outline" size={16} color="#3b82f6" />
                 <Text style={styles.durationText}>
-                  {routine.duration ? `${routine.duration} mins` : "Duración no especificada"}
+                  {routine.duration
+                    ? `${routine.duration} mins`
+                    : "Duración no especificada"}
                 </Text>
               </View>
             </View>
@@ -175,7 +194,12 @@ const PushPullLegsRoutine = () => {
 
             {getExercisesData().map((exercise) => (
               <View key={exercise.id} style={styles.exerciseContainer}>
-                <View style={[styles.exerciseCardWrapper, { width: isWorkoutActive ? "90%" : "100%" }]}>
+                <View
+                  style={[
+                    styles.exerciseCardWrapper,
+                    { width: isWorkoutActive ? "90%" : "100%" },
+                  ]}
+                >
                   <ExerciseCard
                     icon={exercise.icon}
                     name={exercise.name}
@@ -305,18 +329,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   exerciseContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 12,
-    width: '100%',
+    width: "100%",
   },
   exerciseCardWrapper: {
     flex: 1,
   },
   progressText: {
-    color: '#3b82f6',
-    textAlign: 'center',
+    color: "#3b82f6",
+    textAlign: "center",
     marginVertical: 10,
     fontSize: 16,
   },

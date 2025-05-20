@@ -81,7 +81,8 @@ const StatsScreen = ({ navigation, route }) => {
     piernas: '#36A2EB',
     espalda: '#FFCE56',
     brazos: '#4BC0C0',
-    hombros: '#9966FF'
+    hombros: '#9966FF',
+    abdomen: '#FF9F40',
   };
 
   if (!muscleGroupsData || Object.keys(muscleGroupsData).length === 0) {

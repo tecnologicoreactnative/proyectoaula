@@ -12,12 +12,15 @@ const useWorkoutTimer = (exercisesConfig = []) => {
   const [startTime, setStartTime] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const calculateCompletionPercentage = useCallback(() => {
-    const total = Object.keys(completedExercises).length;
-    if (total === 0) return 0;
-    const completed = Object.values(completedExercises).filter(Boolean).length;
-    return Math.round((completed / total) * 100);
-  }, [completedExercises]);
+   const calculateCompletionPercentage = useCallback(() => {
+    const totalExercises = exercisesConfig.length;
+    if (totalExercises === 0) return 0;
+    
+    const completedCount = Object.values(completedExercises)
+      .filter(isCompleted => isCompleted).length;
+      
+    return Math.round((completedCount / totalExercises) * 100);
+  }, [completedExercises, exercisesConfig]);;
 
   const formatTime = useCallback((seconds) => {
     const mins = Math.floor(seconds / 60);
