@@ -138,7 +138,7 @@ const HIITRoutine = () => {
         navigation.navigate("Stats", {
           refresh: true,
           workoutData: {
-            routineName: routine?.name || "Full Body",
+            routineName: routine?.name || "HIIT",
             ...result.workoutData,
           },
         });

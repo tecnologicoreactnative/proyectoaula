@@ -25,6 +25,69 @@ const FullBodyRoutine = () => {
   const [currentImage, setCurrentImage] = useState("");
   const { loading, error, getRoutine, loadAllRoutines } = useRoutinesContext();
 
+  const exercisesConfig = useMemo(() => [
+    {
+      id: "ejercicio1",
+      icon: "barbell",
+      image:
+        "https://www.runningcorrer.com.ar/wprunning/wp-content/uploads/2022/03/ejercicios-sentadillas.webp",
+      series: 4,
+      reps: 12,
+      muscleGroup: "piernas", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "flexibilidad", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+    },
+    {
+      id: "ejercicio2",
+      icon: "body",
+      image:
+        "https://www.ilovefit.org/wp-content/uploads/2017/07/flexiones.jpg",
+      series: 3,
+      reps: 12,
+      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "fuerza", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+    },
+    {
+      id: "ejercicio3",
+      icon: "fitness",
+      image:
+        "https://www.fisioterapiaconmueve.com/wp-content/uploads/2023/04/dominadas.jpg",
+      series: 3,
+      reps: 10,
+      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+    },
+    {
+      id: "ejercicio4",
+      icon: "fitness",
+      image:
+        "https://static.strengthlevel.com/images/exercises/deficit-deadlift/deficit-deadlift-800.jpg",
+      series: 4,
+      reps: 10,
+      muscleGroup: "hombros", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+    },
+    {
+      id: "ejercicio5",
+      icon: "fitness",
+      image:
+        "https://bulevip.com/blog/wp-content/uploads/2024/10/tenica-plank.jpg",
+      series: 3,
+      reps: 30,
+      muscleGroup: "brazos", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "resistencia", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+    },
+    {
+      id: "ejercicio6",
+      icon: "fitness",
+      image:
+        "https://phantom-telva.uecdn.es/b40c0befaa878ad45ac38270ecab95e3/resize/828/f/jpg/assets/multimedia/imagenes/2021/02/26/16143187500035.jpg",
+      series: 3,
+      reps: 10,
+      muscleGroup: "espalda", // 'piernas', 'pecho', 'espalda', 'hombros', 'brazos',
+      exerciseType: "flexibilidad", //'fuerza', 'resistencia', 'cardio', 'flexibilidad'
+    },
+  ],[]);
+
   const {
     isWorkoutActive,
     elapsedTime,
@@ -34,58 +97,8 @@ const FullBodyRoutine = () => {
     toggleExerciseComplete,
     isSaving,
     completionPercentage,
-  } = useWorkoutTimer();
-
-  const exercisesConfig = [
-    {
-      id: "ejercicio1",
-      icon: "barbell",
-      image:
-        "https://www.runningcorrer.com.ar/wprunning/wp-content/uploads/2022/03/ejercicios-sentadillas.webp",
-      series: 4,
-      reps: 12,
-    },
-    {
-      id: "ejercicio2",
-      icon: "body",
-      image:
-        "https://www.ilovefit.org/wp-content/uploads/2017/07/flexiones.jpg",
-      series: 3,
-      reps: 12,
-    },
-    {
-      id: "ejercicio3",
-      icon: "fitness",
-      image:
-        "https://www.fisioterapiaconmueve.com/wp-content/uploads/2023/04/dominadas.jpg",
-      series: 3,
-      reps: 10,
-    },
-    {
-      id: "ejercicio4",
-      icon: "fitness",
-      image:
-        "https://static.strengthlevel.com/images/exercises/deficit-deadlift/deficit-deadlift-800.jpg",
-      series: 4,
-      reps: 10,
-    },
-    {
-      id: "ejercicio5",
-      icon: "fitness",
-      image:
-        "https://bulevip.com/blog/wp-content/uploads/2024/10/tenica-plank.jpg",
-      series: 3,
-      reps: 30,
-    },
-    {
-      id: "ejercicio6",
-      icon: "fitness",
-      image:
-        "https://phantom-telva.uecdn.es/b40c0befaa878ad45ac38270ecab95e3/resize/828/f/jpg/assets/multimedia/imagenes/2021/02/26/16143187500035.jpg",
-      series: 3,
-      reps: 10,
-    },
-  ];
+    completedExercisesData,
+  } = useWorkoutTimer(exercisesConfig);
 
   const getExercisesData = () => {
     if (!routine) return [];
@@ -147,8 +160,10 @@ const handlePress = async () => {
       navigation.navigate('Stats', { 
         refresh: true,
         workoutData: {
-          routineName: routine?.name || "Push Pull Legs",
-          ...result.workoutData
+          routineName: routine?.name || "Full Body",
+          ...result.workoutData,
+          muscleGroups: completedExercisesData.muscleGroups,
+          exerciseTypes: completedExercisesData.exerciseTypes
         }
       });
     } else {

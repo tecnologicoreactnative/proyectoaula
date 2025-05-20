@@ -133,7 +133,7 @@ const BeginnerRoutine = () => {
       navigation.navigate('Stats', { 
         refresh: true,
         workoutData: {
-          routineName: routine?.name || "Full Body",
+          routineName: routine?.name || "Beginner",
           ...result.workoutData
         }
       });

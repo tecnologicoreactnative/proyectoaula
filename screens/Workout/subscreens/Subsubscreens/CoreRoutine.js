@@ -132,7 +132,7 @@ const CoreRoutine = () => {
       navigation.navigate('Stats', { 
         refresh: true,
         workoutData: {
-          routineName: routine?.name || "Full Body",
+          routineName: routine?.name || "Core y Abdomen",
           ...result.workoutData
         }
       });

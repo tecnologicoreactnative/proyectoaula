@@ -15,30 +15,118 @@ import {
   ProgressChart,
 } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
-import { getSessionsByMonth, getSessionsByDay } from "../../../utils/workoutStorage"; 
+import { getSessionsByMonth, getSessionsByDay, getWorkoutSessions } from "../../../utils/workoutStorage"; 
+import { useTheme } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get("window").width;
 
 const StatsScreen = ({ navigation, route }) => {
+   const { colors } = useTheme();
   const [monthlyData, setMonthlyData] = useState(Array(12).fill(0));
   const [dailyData, setDailyData] = useState(Array(7).fill(0));
+  const [muscleGroupsData, setMuscleGroupsData] = useState({});
+  const [exerciseTypesData, setExerciseTypesData] = useState({});
   const [loading, setLoading] = useState(true);
+
+    const chartColors = {
+    pecho: '#FF6384',
+    piernas: '#36A2EB',
+    espalda: '#FFCE56',
+    brazos: '#4BC0C0',
+    hombros: '#9966FF',
+    fuerza: '#FF6384',
+    resistencia: '#36A2EB',
+    flexibilidad: '#FFCE56',
+    cardio: '#4BC0C0'
+  };
 
   const loadStats = async () => {
     setLoading(true);
     try {
-      const [byMonth, byDay] = await Promise.all([
+      const [byMonth, byDay, sessions] = await Promise.all([
         getSessionsByMonth(),
-        getSessionsByDay()
+        getSessionsByDay(),
+        getWorkoutSessions()
       ]);
       
       setMonthlyData(byMonth);
       setDailyData(byDay);
+      
+      // Calcular distribución de músculos
+      const muscles = {};
+      const types = {};
+      
+      sessions.forEach(session => {
+        Object.entries(session.muscleGroups || {}).forEach(([muscle, count]) => {
+          muscles[muscle] = (muscles[muscle] || 0) + count;
+        });
+        
+        Object.entries(session.exerciseTypes || {}).forEach(([type, count]) => {
+          types[type] = (types[type] || 0) + count;
+        });
+      });
+      
+      setMuscleGroupsData(muscles);
+      setExerciseTypesData(types);
     } catch (error) {
       console.error('Error loading stats:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getMuscleGroupsChartData = () => {
+  const colors = {
+    pecho: '#FF6384',
+    piernas: '#36A2EB',
+    espalda: '#FFCE56',
+    brazos: '#4BC0C0',
+    hombros: '#9966FF'
+  };
+
+  if (!muscleGroupsData || Object.keys(muscleGroupsData).length === 0) {
+    return [
+      {
+        name: "Sin datos",
+        population: 1,
+        color: "#CCCCCC",
+        legendFontColor: "#FFFFFF",
+        legendFontSize: 15
+      }
+    ];
+  }
+
+  return Object.entries(muscleGroupsData)
+    .filter(([_, count]) => count > 0)
+    .map(([name, value]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      population: value,
+      color: colors[name.toLowerCase()] || `#${Math.floor(Math.random()*16777215).toString(16)}`,
+      legendFontColor: "#FFFFFF",  // Blanco para mejor contraste
+      legendFontSize: 12,
+      labelColor: "#FFFFFF"        // Color para labels internos
+    }));
+};
+
+  // Función para transformar datos de tipos de ejercicio al formato de ProgressChart
+ const getExerciseTypesChartData = () => {
+    const types = ["fuerza", "resistencia", "flexibilidad", "cardio"];
+    
+    // If no data, return equal distribution
+    if (!exerciseTypesData || Object.keys(exerciseTypesData).length === 0) {
+      return {
+        labels: types.map(t => t.charAt(0).toUpperCase() + t.slice(1)),
+        data: types.map(() => 0.25)
+      };
+    }
+    
+    const total = Object.values(exerciseTypesData).reduce((sum, val) => sum + val, 0) || 1;
+    
+    return {
+      labels: types.map(t => t.charAt(0).toUpperCase() + t.slice(1)),
+      data: types.map(t => (exerciseTypesData[t] || 0) / total),
+      colors: types.map(t => chartColors[t])
+    };
   };
 
   useEffect(() => {
@@ -142,74 +230,39 @@ const StatsScreen = ({ navigation, route }) => {
         />
       </View>
 
-      {/* Resto de gráficos (se mantienen igual) */}
+     {/* Gráfico de Distribución de ejercicios (actualizado) */}
       <View style={styles.chartContainer}>
         <Text style={styles.chartTitle}>Distribución de ejercicios</Text>
         <PieChart
-          data={[
-            {
-              name: "Pecho",
-              population: 25,
-              color: "#FF6384",
-              legendFontColor: "#FFF",
-              legendFontSize: 12, 
-            },
-            {
-              name: "Piernas",
-              population: 20,
-              color: "#36A2EB",
-              legendFontColor: "#FFF",
-              legendFontSize: 12,
-            },
-            {
-              name: "Espalda",
-              population: 30,
-              color: "#FFCE56",
-              legendFontColor: "#FFF",
-              legendFontSize: 12,
-            },
-            {
-              name: "Brazos",
-              population: 15,
-              color: "#4BC0C0",
-              legendFontColor: "#FFF",
-              legendFontSize: 12,
-            },
-          ]}
+          data={getMuscleGroupsChartData()}
           width={screenWidth - 32}
-          height={220} 
-          chartConfig={{
-            ...sharedChartConfig,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          }}
+          height={220}
+          chartConfig={sharedChartConfig}
           accessor="population"
           backgroundColor="transparent"
-          paddingLeft="0" 
-          center={[10, 10]} 
+          paddingLeft="0"
+          center={[10, 10]}
           absolute
           style={styles.chart}
           avoidFalseZero
         />
       </View>
 
+      {/* Gráfico de Progreso general (actualizado) */}
       <View style={styles.chartContainer}>
         <Text style={styles.chartTitle}>Progreso general</Text>
         <ProgressChart
-          data={{
-            labels: ["Fuerza", "Resistencia", "Flexibilidad", "Cardio"],
-            data: [0.7, 0.5, 0.3, 0.8],
-          }}
+          data={getExerciseTypesChartData()}
           width={screenWidth - 32}
           height={220}
           chartConfig={{
             ...sharedChartConfig,
-            color: (opacity = 1, index) =>
-              [
-                `rgba(255, 99, 132, ${opacity})`,
-                `rgba(54, 162, 235, ${opacity})`,
-                `rgba(255, 206, 86, ${opacity})`,
-                `rgba(75, 192, 192, ${opacity})`,
-              ][index],
+            color: (opacity = 1, index) => [
+              `rgba(255, 99, 132, ${opacity})`,
+              `rgba(54, 162, 235, ${opacity})`,
+              `rgba(255, 206, 86, ${opacity})`,
+              `rgba(75, 192, 192, ${opacity})`
+            ][index],
           }}
         />
       </View>
