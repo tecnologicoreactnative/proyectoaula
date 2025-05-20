@@ -14,34 +14,33 @@ import { AppContext } from '../context/AppContext';
 
 export function useLogin() {
   const { setIsAuthenticated, setUser } = useContext(AppContext);
-
-  return async (email, password) => {
-    try {
-      const credential = await signInWithEmailAndPassword(auth, email, password);
-      const user = credential.user;
-      setUser(user);
-      setIsAuthenticated(true);
-      return true;
-    } catch (error) {
-      setIsAuthenticated(false);
-      switch (error.code) {
-        case 'auth/user-not-found':
-          Alert.alert('Error', 'Usuario no encontrado');
-          break;
-        case 'auth/wrong-password':
-          Alert.alert('Error', 'Contraseña incorrecta');
-          break;
-        case 'auth/invalid-email':
-          Alert.alert('Error', 'Correo electrónico inválido');
-          break;
-          case 'auth/invalid-credential':
-         Alert.alert('Error', 'Contraseña inválida');
-        break;
-        default:
-        Alert.alert('Error', 'No se pudo iniciar sesión');
-           
-        }
-      return false;
+    return async (email, password) => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            setUser(user);
+            setIsAuthenticated(true);
+            return true;
+        } catch (error) {
+            setIsAuthenticated(false);
+            Alert.alert('Error', error.message);
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    Alert.alert('Error', 'Usuario no encontrado');
+                    break;
+                case 'auth/wrong-password':
+                    Alert.alert('Error', 'Contraseña incorrecta');
+                    break;
+                case 'auth/invalid-email':
+                    Alert.alert('Error', 'Correo electrónico inválido');
+                    break;
+                case 'auth/invalid-credential':
+                    Alert.alert('Error', 'Contraseña inválida');
+                    break;
+                default:
+                    Alert.alert('Error', 'No se pudo iniciar sesión');
+            }
+            return false;
     }
   };
 }
