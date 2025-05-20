@@ -1,4 +1,5 @@
 import {
+
   addDoc,
   collection,
   getDocs,
@@ -11,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../lib/Firebase';
 import { Alert } from 'react-native';
+
 
 export const createRecord = async ({ collectionName, data }) => {
   try {
@@ -78,3 +80,4 @@ export const deleteRecord = async ({ collectionName, docId }) => {
     Alert.alert('Error', e.message);
   }
 };
+
