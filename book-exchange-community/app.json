@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "book-exchange-community",
+    "slug": "book-exchange-community",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/Logo.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/Swap-Books.gif",
+      "resizeMode": "contain",
+      "backgroundColor": "#011F26"
+    },
+    "android": {
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "CAMERA"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB7WZM7q1LItjDATGrc8Q0RH4M0HHcAJNw"
+        }
+      },
+      "package": "com.anonymous.bookexchangecommunity"
+    },
+    "ios": {
+      "config": {
+        "googleMapsApiKey": "AIzaSyB7WZM7q1LItjDATGrc8Q0RH4M0HHcAJNw"
+      },
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Esta app necesita acceso a tus fotos para seleccionar una imagen de perfil.",
+        "NSCameraUsageDescription": "Esta app necesita acceso a la cámara para tomar una foto de perfil."
+      }
+    },
+    "extra": {
+      "GOOGLE_MAPS_JS_KEY": "AIzaSyB7WZM7q1LItjDATGrc8Q0RH4M0HHcAJNw",
+      "eas": {
+        "projectId": "fe82bedf-98e7-42bc-aa51-823f5face2ea"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
