@@ -5,6 +5,7 @@ XHealth es una aplicación móvil integral para el seguimiento de rutinas de eje
 
 ## APK Link 
 https://expo.dev/accounts/mao2q/projects/firetive/builds/aa2715b6-daf2-4c4d-8567-dee61b6c0037
+![alt text](image.png)
 
 ## Caracteristicas
 
