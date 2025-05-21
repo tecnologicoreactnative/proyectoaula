@@ -16,6 +16,11 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.rutinas.firetive",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -23,6 +28,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0647dafd-20ce-468c-84b7-333a6876b2af"
+      }
+    },
+    "owner": "mao2q"
   }
 }
