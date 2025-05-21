@@ -3,7 +3,7 @@
 ## Visión General 🌟 
 XHealth es una aplicación móvil integral para el seguimiento de rutinas de ejercicio, progreso físico y gestión de salud. Diseñada con un enfoque en la experiencia del usuario y seguridad de datos.
 
-## Video flujo de la aplicación:
+## Video flujo de la aplicación
 https://youtu.be/T23h0OuGqBE
 
 ## APK Link 
