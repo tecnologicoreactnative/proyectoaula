@@ -10,26 +10,27 @@ service cloud.firestore {
     // Reglas para la colección de platos
     match /platos/{platoId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if request.auth != null;
     }
     
     // Reglas para la colección de pedidos
     match /pedidos/{pedidoId} {
-      allow read: if request.auth != null && (
-        isAdmin() || 
-        resource.data.usuarioId == request.auth.uid
-      );
+      allow read: if request.auth != null;
       allow create: if request.auth != null;
-      allow update: if isAdmin();
+      allow update: if request.auth != null;
       allow delete: if false;
     }
     
     // Reglas para la colección de usuarios
     match /usuarios/{userId} {
-      allow read: if request.auth != null && 
-        (userId == request.auth.uid || isAdmin());
-      allow write: if request.auth != null && 
-        (userId == request.auth.uid || isAdmin());
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // Reglas para la colección de tokens de notificaciones
+    match /pushTokens/{userId} {
+      // Temporalmente más permisivo para diagnóstico
+      allow read, write: if request.auth != null;
     }
   }
 } 
