@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, Alert } from "react-native";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { PlatosProvider } from "./context/PlatosContext";
 import { PedidosProvider } from "./context/PedidosContext";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotificationsAsync, setupNotificationListeners } from './utils/notifications';
 
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -17,29 +19,68 @@ import AdminPedidosScreen from "./screens/AdminPedidosScreen";
 
 const Stack = createNativeStackNavigator();
 
-const Navigation = () => {
-  const { user, loading, isAdmin } = useAuth();
+function Navigation() {
+  const { user, loading, isAdmin, updateUserPushToken } = useAuth();
+
+  useEffect(() => {
+    let cleanupNotifications;
+
+    const setupNotifications = async () => {
+      if (user) {
+        console.log('Iniciando configuración de notificaciones para:', user.uid);
+
+        try {
+          // Configurar notificaciones
+          Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+              shouldShowAlert: true,
+              shouldPlaySound: true,
+              shouldSetBadge: true,
+            }),
+          });
+
+          // Registrar para notificaciones
+          const token = await registerForPushNotificationsAsync(user.uid);
+          console.log('Token obtenido:', token);
+          
+          if (token) {
+            await updateUserPushToken(user.uid, token);
+            console.log('Token actualizado en Firestore');
+          }
+
+          // Configurar listeners de notificaciones
+          cleanupNotifications = setupNotificationListeners(notification => {
+            console.log('Notificación recibida en App.js:', notification);
+            Alert.alert(
+              notification.request.content.title,
+              notification.request.content.body
+            );
+          });
+        } catch (error) {
+          console.error('Error al configurar notificaciones:', error);
+        }
+      }
+    };
+
+    setupNotifications();
+
+    return () => {
+      if (cleanupNotifications) {
+        cleanupNotifications();
+      }
+    };
+  }, [user]);
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#007bff" />
       </View>
     );
   }
 
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#fff',
-        },
-        headerTintColor: '#007bff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      }}
-    >
+    <Stack.Navigator>
       {!user ? (
         <>
           <Stack.Screen 
@@ -50,10 +91,7 @@ const Navigation = () => {
           <Stack.Screen 
             name="Register" 
             component={RegisterScreen}
-            options={{ 
-              title: "Registro",
-              headerBackTitle: "Atrás"
-            }}
+            options={{ headerShown: false }}
           />
         </>
       ) : (
@@ -63,23 +101,34 @@ const Navigation = () => {
               <Stack.Screen 
                 name="Admin" 
                 component={AdminScreen}
-                options={{ 
-                  title: "Panel de Administración",
-                  headerLeft: null
-                }}
+                options={{ headerShown: false }}
               />
               <Stack.Screen 
-                name="EditPlatoScreen" 
+                name="EditPlato" 
                 component={EditPlatoScreen}
-                options={({ route }) => ({
-                  title: route.params?.plato ? 'Editar Plato' : 'Nuevo Plato'
-                })}
+                options={{ 
+                  title: "Editar Plato",
+                  headerStyle: {
+                    backgroundColor: '#f8f9fa',
+                  },
+                  headerTintColor: '#212529',
+                  headerTitleStyle: {
+                    fontWeight: '600',
+                  },
+                }}
               />
               <Stack.Screen 
                 name="AdminPedidos" 
                 component={AdminPedidosScreen}
                 options={{ 
-                  title: "Gestión de Pedidos"
+                  title: "Gestionar Pedidos",
+                  headerStyle: {
+                    backgroundColor: '#f8f9fa',
+                  },
+                  headerTintColor: '#212529',
+                  headerTitleStyle: {
+                    fontWeight: '600',
+                  },
                 }}
               />
             </>
@@ -88,16 +137,20 @@ const Navigation = () => {
               <Stack.Screen 
                 name="Menu" 
                 component={MenuScreen}
-                options={{ 
-                  title: "Menú",
-                  headerLeft: null
-                }}
+                options={{ headerShown: false }}
               />
               <Stack.Screen 
                 name="Pedidos" 
                 component={PedidosScreen}
                 options={{ 
-                  title: "Mis Pedidos"
+                  title: "Mis Pedidos",
+                  headerStyle: {
+                    backgroundColor: '#f8f9fa',
+                  },
+                  headerTintColor: '#212529',
+                  headerTitleStyle: {
+                    fontWeight: '600',
+                  },
                 }}
               />
             </>
@@ -106,20 +159,20 @@ const Navigation = () => {
       )}
     </Stack.Navigator>
   );
-};
+}
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <PlatosProvider>
-          <PedidosProvider>
-            <NavigationContainer>
+      <NavigationContainer>
+        <AuthProvider>
+          <PlatosProvider>
+            <PedidosProvider>
               <Navigation />
-            </NavigationContainer>
-          </PedidosProvider>
-        </PlatosProvider>
-      </AuthProvider>
+            </PedidosProvider>
+          </PlatosProvider>
+        </AuthProvider>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
