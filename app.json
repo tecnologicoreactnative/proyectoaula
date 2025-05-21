@@ -16,6 +16,9 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.rutinas.firetive",
+      "googleServicesFile": "./google-services.json",
+      "permissions": ["android.permission.POST_NOTIFICATIONS"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -23,6 +26,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "afd5a451-dded-4fa3-8444-fce977daf760"
+      }
+    },
+    "owner": "shadowblood"
   }
 }
