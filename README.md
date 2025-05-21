@@ -2,6 +2,12 @@
 
 Aplicación móvil desarrollada con React Native y Firebase que incluye sistema de autenticación y menú de platos típicos colombianos.
 
+## Instalación y Descarga del APK
+
+Puedes descargar el APK generado desde Expo en el siguiente enlace:
+
+[Descargar APK desde Expo](https://expo.dev/accounts/emmanuel.villegas/projects/restaurante/builds/de0f6b71-890b-49bc-948b-d96ca3ffee85)
+
 ## Historial de Cambios y Ajustes para Entrega
 
 - **Notificaciones Push:**
@@ -10,7 +16,11 @@ Aplicación móvil desarrollada con React Native y Firebase que incluye sistema 
   - Se actualizó el contexto de autenticación y pedidos para registrar y enviar tokens de notificación.
   - Se agregó lógica para enviar notificaciones locales en emulador/desarrollo y push en dispositivos físicos.
   - Se mejoró el manejo de errores y logs para facilitar el diagnóstico.
-  - Se eliminaron las notificaciones de prueba automáticas al iniciar sesión.
+  - Se eliminaron comentarios y código de prueba para la entrega final.
+- **Compatibilidad y Build:**
+  - Se ajustaron las versiones de Kotlin, compileSdk, targetSdk y buildTools para compatibilidad con Expo y Firebase.
+  - Se resolvieron conflictos de manifiesto y recursos nativos.
+  - Se documentó el proceso de build y entrega.
 
 - **Ajustes de Build y Compatibilidad:**
   - Se forzó la versión de Kotlin a `1.7.20` en los archivos `android/build.gradle` y `android/gradle.properties` para evitar errores de incompatibilidad con el compilador de Jetpack Compose.
