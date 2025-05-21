@@ -451,6 +451,13 @@ const AdminScreen = ({navigation}) => {
               onPress={() => setModalVisible(false)}
               color="gray"
             />
+            <Button
+             title="Cerrar sesión"
+             onPress={() => {
+             navigation.navigate("Login");
+             }}
+             color="#d9534f"
+            />
           </View>
         </View>
       </Modal>

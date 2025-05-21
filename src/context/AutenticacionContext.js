@@ -61,10 +61,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logOut1 = async () => { 
+    try {
+      await signOut(auth);
+      setUser(null);
+      console.log("Sesión cerrada exitosamente.");
+    } catch (error) {
+      console.error("No se pudo cerrar sesión", error);
+      alert("Error al cerrar sesión. Por favor, inténtalo de nuevo.");
+    }
+  };
+
+
   const authContextValue = {
     user,
     signIn,
     logOut,
+    logOut1, 
   };
 
   useEffect(() => {

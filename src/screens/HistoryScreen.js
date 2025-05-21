@@ -40,7 +40,7 @@ const HistoryScreen = () => {
       const q = query(
         collection(db, "citas"),
         where("id_especialista", "==", user.uid),
-        limit(1)
+       
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {

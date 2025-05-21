@@ -1,10 +1,25 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, TextInput, Button, Text, Alert, ScrollView, StyleSheet, Platform, TouchableOpacity } from "react-native";
-import { collection, addDoc, getDocs, query, where, updateDoc, doc } from "firebase/firestore";
-import { db, auth } from "../services/firebaseConfig";
-import { AuthContext } from "../context/AutenticacionContext";
+import { View, TextInput, Button, Text, ScrollView, StyleSheet, Platform, TouchableOpacity, ActivityIndicator, Modal } from "react-native";
+import { collection, getDocs, query, where, updateDoc, doc, getDoc } from "firebase/firestore";
+import { db, auth } from "../services/firebaseConfig"; 
+import { AuthContext } from "../context/AutenticacionContext"; 
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
+
+
+const EmojiPicker = ({ onEmojiClick }) => {
+    const emojis = ["😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆", "😉", "😊", "😋", "😎", "🤩", "🥳", "😇", "🙂", "🙃", "🫠", "😮‍💨", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😢", "😭", "🥺", "🥹", "😩", "😫", "😖", "😣", "😞", "😔", "😟", "😕", "🙁", "☹️", "😮"]; // Solo algunos emojis para el ejemplo
+
+    return (
+        <View style={styles.emojiPickerGrid}>
+            {emojis.map((emoji, index) => (
+                <TouchableOpacity key={index} onPress={() => onEmojiClick({ emoji })}>
+                    <Text style={styles.emojiItem}>{emoji}</Text>
+                </TouchableOpacity>
+            ))}
+        </View>
+    );
+};
 
 const PatientPortalScreen = ({ navigation }) => {
     const { user } = useContext(AuthContext);
@@ -24,10 +39,27 @@ const PatientPortalScreen = ({ navigation }) => {
         { label: "Femenino", value: "F" },
         { label: "Otro", value: "O" },
     ]);
+    const [userAppointments, setUserAppointments] = useState([]); 
+    const [loadingUserData, setLoadingUserData] = useState(true); 
+    const [loadingAppointments, setLoadingAppointments] = useState(true); 
+    const [message, setMessage] = useState(''); 
+    const [showMessageModal, setShowMessageModal] = useState(false); 
+
+    const showCustomMessage = (msg) => {
+        setMessage(msg);
+        setShowMessageModal(true);
+    };
+
+    const hideCustomMessage = () => {
+        setShowMessageModal(false);
+        setMessage('');
+    };
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchUserDataAndAppointments = async () => {
             if (user && user.uid) {
+                setLoadingUserData(true);
+                setLoadingAppointments(true);
                 try {
                     const userQuery = query(collection(db, "users"), where("uid", "==", user.uid));
                     const userSnapshot = await getDocs(userQuery);
@@ -40,22 +72,41 @@ const PatientPortalScreen = ({ navigation }) => {
                         if (data.emoji) {
                             setSelectedEmoji(data.emoji);
                         }
+
+                        if (data.citas && data.citas.length > 0) {
+                            const appointmentsPromises = data.citas.map(async (citaId) => {
+                                const citaDocRef = doc(db, "citas", citaId);
+                                const citaDocSnap = await getDoc(citaDocRef);
+                                if (citaDocSnap.exists()) {
+                                    return { id: citaDocSnap.id, ...citaDocSnap.data() };
+                                }
+                                return null;
+                            });
+                            const fetchedAppointments = (await Promise.all(appointmentsPromises)).filter(Boolean);
+                            setUserAppointments(fetchedAppointments);
+                        } else {
+                            setUserAppointments([]);
+                        }
                     } else {
                         console.log("No se encontró información del usuario con este UID:", user.uid);
                         setUserData(null);
                         setEditedData(null);
+                        setUserAppointments([]);
                     }
                 } catch (error) {
-                    console.error("Error al obtener datos del usuario:", error);
-                    Alert.alert("Error", "No se pudieron cargar los datos del usuario.");
+                    console.error("Error al obtener datos del usuario o citas:", error);
+                    showCustomMessage("Error al cargar los datos del usuario o sus citas.");
                     setUserData(null);
                     setEditedData(null);
+                    setUserAppointments([]);
+                } finally {
+                    setLoadingUserData(false);
+                    setLoadingAppointments(false);
                 }
             }
         };
-        fetchUserData();
-    }, [user]);
-
+        fetchUserDataAndAppointments();
+    }, [user]); 
     const handleEmojiSelect = async (emojiObject) => {
         setSelectedEmoji(emojiObject.emoji);
         setShowEmojiPicker(false);
@@ -69,7 +120,7 @@ const PatientPortalScreen = ({ navigation }) => {
                 console.log("Emoji guardado:", emojiObject.emoji);
             } catch (error) {
                 console.error("Error al actualizar el emoji:", error);
-                Alert.alert("Error", "No se pudo guardar el emoji.");
+                showCustomMessage("No se pudo guardar el emoji.");
             }
         }
     };
@@ -97,19 +148,28 @@ const PatientPortalScreen = ({ navigation }) => {
                 });
                 setUserData(editedData);
                 setIsEditing(false);
-                Alert.alert("Éxito", "Información actualizada correctamente.");
+                showCustomMessage("Información actualizada correctamente.");
             } catch (error) {
                 console.error("Error al actualizar la información:", error);
-                Alert.alert("Error", "No se pudo actualizar la información.");
+                showCustomMessage("No se pudo actualizar la información.");
             }
         }
     };
+
+    if (loadingUserData || loadingAppointments) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text>Cargando información del portal...</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scrollContainer}>
                 <Text style={[styles.title, { textAlign: 'center' }]}>Portal del Paciente </Text>
-                <Text style={[styles.welcome, { textAlign: 'center' }]} >{`Bienvenido al portal del paciente ${user.name}`}</Text>
+                <Text style={[styles.welcome, { textAlign: 'center' }]} >{`Bienvenido al portal del paciente ${user?.name || ''}`}</Text>
                 <TouchableOpacity onPress={() => setShowEmojiPicker(true)} style={styles.emojiButton}>
                     <Text style={styles.selectedEmoji}>{selectedEmoji}</Text>
                 </TouchableOpacity>
@@ -123,6 +183,7 @@ const PatientPortalScreen = ({ navigation }) => {
 
                 {userData && (
                     <View style={styles.infoContainer}>
+                        <Text style={styles.sectionTitle}>Mi Información</Text>
                         <View style={styles.userInfo}>
                             {isEditing ? (
                                 <>
@@ -158,6 +219,7 @@ const PatientPortalScreen = ({ navigation }) => {
                                         value={editedData.documentNumber}
                                         onChangeText={(text) => handleInputChange('documentNumber', text)}
                                         placeholder="Número de Documento"
+                                        keyboardType="numeric"
                                     />
                                     <Picker
                                         selectedValue={editedData.genre}
@@ -179,12 +241,19 @@ const PatientPortalScreen = ({ navigation }) => {
                                         value={editedData.phone}
                                         onChangeText={(text) => handleInputChange('phone', text)}
                                         placeholder="Teléfono"
+                                        keyboardType="phone-pad"
                                     />
-                                    <Button title="Guardar" onPress={handleSave} />
-                                    <Button title="Cancelar" onPress={() => {
-                                        setIsEditing(false);
-                                        setEditedData(userData);
-                                    }} />
+                                    <View style={styles.buttonGroup}>
+                                        <TouchableOpacity style={[styles.actionButton, styles.saveButton]} onPress={handleSave}>
+                                            <Text style={styles.buttonText}>Guardar</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={[styles.actionButton, styles.cancelButton]} onPress={() => {
+                                            setIsEditing(false);
+                                            setEditedData(userData);
+                                        }}>
+                                            <Text style={styles.buttonText}>Cancelar</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </>
                             ) : (
                                 <>
@@ -212,140 +281,313 @@ const PatientPortalScreen = ({ navigation }) => {
                                     <Text style={styles.infoText}>
                                         <Text style={styles.label}>Teléfono:</Text> {userData.phone}
                                     </Text>
-                                    <Button title="Editar Información" onPress={() => setIsEditing(true)} />
+                                    <TouchableOpacity style={[styles.actionButton, styles.editButton]} onPress={() => setIsEditing(true)}>
+                                        <Text style={styles.buttonText}>Editar Información</Text>
+                                    </TouchableOpacity>
                                 </>
                             )}
                         </View>
                     </View>
                 )}
+
+                {}
+                <View style={styles.appointmentsContainer}>
+                    <Text style={styles.sectionTitle}>Mis Citas Agendadas</Text>
+                    {userAppointments.length === 0 ? (
+                        <Text style={styles.noAppointmentsText}>No tienes citas agendadas en este momento.</Text>
+                    ) : (
+                        userAppointments.map((appointment) => (
+                            <View key={appointment.id} style={styles.appointmentItem}>
+                                <Text style={styles.appointmentText}>📅 Fecha: {appointment.fecha}</Text>
+                                <Text style={styles.appointmentText}>⏰ Hora: {appointment.hora}</Text>
+                                <Text style={styles.appointmentText}>👨‍⚕️ Especialista: {appointment.nombre_especialista}</Text>
+                                <Text style={styles.appointmentText}>Estado: {appointment.estado}</Text>
+                            </View>
+                        ))
+                    )}
+                </View>
             </ScrollView>
+
             <View style={styles.buttonContainer}>
-                <Button
-                    title="Ir a la agenda"
-                    onPress={() => navigation.navigate("Citas")}
-                    color="blue"
-                />
-                <Button
-                    title="Cerrar sesión"
-                    onPress={() => {
-                        navigation.navigate("Login");
-                    }}
-                    color="#d9534f"
-                />
-                <Button
-                    title="Cancelar/Reprogramar cita"
-                    onPress={() => navigation.navigate("Cancelacion_Reprogramacion")}
-                    color="#d9534f"
-                />
+                <TouchableOpacity style={[styles.bottomButton, styles.agendaButton]} onPress={() => navigation.navigate("Citas")}>
+                    <Text style={styles.buttonText}>Ir a la agenda</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.bottomButton, styles.logoutButton]} onPress={() => {
+                    navigation.navigate("Login");
+                }}>
+                    <Text style={styles.buttonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
             </View>
+
+            {}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={showMessageModal}
+                onRequestClose={hideCustomMessage} 
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalTitle}>Mensaje</Text>
+                        <Text style={styles.modalText}>{message}</Text>
+                        <TouchableOpacity
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={hideCustomMessage}
+                        >
+                            <Text style={styles.textStyle}>Cerrar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: 'column',
+        backgroundColor: '#f0f2f5',
     },
     scrollContainer: {
-        flexGrow: 1,
-        paddingBottom: 70,
+        flex: 1,
+        padding: 20,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f0f2f5',
     },
     title: {
-        fontSize: 20,
-        marginBottom: 16,
-        fontWeight: "bold",
-    },
-    input: {
-        borderWidth: 1,
-        marginBottom: 12,
-        padding: 10,
-        borderRadius: 5,
-        borderColor: "#ccc",
-        backgroundColor: "#fff",
-    },
-    label: {
-        marginTop: 10,
-        marginBottom: 5,
-        fontWeight: "bold",
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10,
     },
     welcome: {
-        marginBottom: 16,
-        fontSize: 16,
-        color: "#2c3e50",
+        fontSize: 18,
+        color: '#555',
+        marginBottom: 20,
     },
-    pickerContainer: {
-        marginBottom: 12,
-        borderWidth: 0.5,
-        borderRadius: 15,
+    emojiButton: {
+        alignSelf: 'center',
+        marginBottom: 20,
+        padding: 10,
+        borderRadius: 50,
+        backgroundColor: '#e0e0e0',
     },
-    picker: {
-        height: 50,
-        width: "100%",
-        backgroundColor: "#fff",
-        borderRadius: 5,
-        borderColor: "#ccc",
+    selectedEmoji: {
+        fontSize: 40,
     },
-    errorText: {
-        color: "red",
-        marginTop: 10,
+    emojiPickerContainer: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    emojiPickerGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
         marginBottom: 10,
-        textAlign: "center",
+    },
+    emojiItem: {
+        fontSize: 30,
+        padding: 5,
     },
     infoContainer: {
-        flexDirection: 'row',
-        marginTop: 20,
-        padding: 10,
-        borderRadius: 8,
-        backgroundColor: '#e0f7fa',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 20,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    sectionTitle: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+        paddingBottom: 10,
     },
     userInfo: {
-        flex: 1,
+      
     },
     infoText: {
         fontSize: 16,
-        color: '#333',
         marginBottom: 8,
+        color: '#444',
     },
     label: {
         fontWeight: 'bold',
-        color: '#2c3e50',
+        color: '#333',
     },
-    emojiButton: {
-        marginTop: 5,
-        padding: 5,
-        borderRadius: 5,
+    input: {
         borderWidth: 1,
-        borderColor: '#ccc',
-        alignSelf: 'center',
-        marginBottom: 10,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 15,
+        fontSize: 16,
+        color: '#333',
     },
-    selectedEmoji: {
-        fontSize: 50,
+    picker: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        marginBottom: 15,
+        backgroundColor: '#f9f9f9',
+        height: 50, 
     },
-    emojiPickerContainer: {
-        position: 'absolute',
-        top: 150,
-        left: 0,
-        right: 0,
+    buttonGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 10,
+    },
+    actionButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    editButton: {
+        backgroundColor: '#007bff',
+        marginTop: 10,
+    },
+    saveButton: {
+        backgroundColor: '#28a745',
+    },
+    cancelButton: {
+        backgroundColor: '#dc3545',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    appointmentsContainer: {
         backgroundColor: '#fff',
-        padding: 10,
         borderRadius: 10,
+        padding: 20,
+        marginBottom: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 5,
-        elevation: 5,
-        zIndex: 10,
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    appointmentItem: {
+        backgroundColor: '#f8f9fa',
+        borderRadius: 8,
+        padding: 15,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#e9ecef',
+    },
+    appointmentText: {
+        fontSize: 16,
+        marginBottom: 5,
+        color: '#495057',
+    },
+    noAppointmentsText: {
+        fontSize: 16,
+        textAlign: 'center',
+        color: '#888',
+        marginTop: 10,
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginTop: 'auto',
-        paddingBottom: 20,
-        backgroundColor: '#f0f0f0',
-        paddingTop: 10,
+        padding: 15,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+        backgroundColor: '#fff',
+    },
+    bottomButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    agendaButton: {
+        backgroundColor: '#007bff',
+    },
+    logoutButton: {
+        backgroundColor: '#dc3545',
+    },
+   
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)', 
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        width: '80%', 
+        maxWidth: 400, 
+    },
+    modalTitle: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    modalText: {
+        marginBottom: 10,
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#555',
+    },
+    button: {
+        borderRadius: 10,
+        padding: 12,
+        elevation: 2,
+        minWidth: 100,
+        marginHorizontal: 5,
+    },
+    buttonClose: {
+        backgroundColor: '#2196F3', 
+        marginTop: 15,
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
     },
 });
+
 
 export default PatientPortalScreen;

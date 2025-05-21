@@ -40,8 +40,9 @@ const Agendamiento = () => {
 
     const disponibilidad = {
       id_especialista: user.uid,
-      fecha: selectedDate.toISOString().split('T')[0], // formato YYYY-MM-DD
-      hora: selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) // HH:MM
+      nombre_especialista: user.name,
+      fecha: selectedDate.toISOString().split('T')[0], 
+      hora: selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
     };
 
     try {

@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { collection, getDocs, addDoc, deleteDoc, getFirestore, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { AuthContext } from '../context/AutenticacionContext';
 
+
 const Citas = ({ navigation }) => {
     const { user } = useContext(AuthContext);
     const [disponibles, setDisponibles] = useState([]);
@@ -49,6 +50,7 @@ const Citas = ({ navigation }) => {
 
             Alert.alert('Cita agendada con éxito');
             navigation.navigate('PatientPortalScreen');
+           
 
         } catch (error) {
             console.error(error);
