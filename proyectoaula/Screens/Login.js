@@ -1,37 +1,41 @@
 import React, { useState } from "react";
 import { View, Text, Alert, TouchableOpacity, StyleSheet } from "react-native";
 import { TextInput, Button } from "react-native-paper";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { Ionicons } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
 
-const Register = ({ navigation }) => {
+const Login = ({ navigation }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [secureText, setSecureText] = useState(true);
 
-    const handleRegister = async () => {
+    const handleLogin = async () => {
         if (!email || !password) {
-            Alert.alert("Error", "Por favor, ingresa un correo y contraseña");
+            Alert.alert("Error", "Por favor, ingresa tu correo y contraseña");
             return;
         }
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            Alert.alert("Éxito", "Usuario registrado correctamente");
-            navigation.navigate("Login"); // Redirige a login después del registro
+            await signInWithEmailAndPassword(auth, email, password);
+            Alert.alert("Éxito", "Inicio de sesión exitoso");
+            navigation.navigate("Perfil");
         } catch (error) {
-            Alert.alert("Error", "No se pudo registrar el usuario");
+            Alert.alert("Error", "Credenciales incorrectas o usuario no registrado");
         }
     };
 
     return (
         <View style={styles.container}>
-            {/* Botón para regresar */}
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Login")}>
-                <Ionicons name="arrow-back" size={30} color="white" />
-            </TouchableOpacity>
+            
+            <LottieView
+                source={require("../assets/Animation - 1745355344731.json")}
+                autoPlay
+                loop
+                style={{ width: 150, height: 150 }}
+            />
 
-            <Text style={styles.title}>Crear una cuenta</Text>
+            <Text style={styles.title}>Inmobiliaria Centenario</Text>
 
             <TextInput
                 label="Correo electrónico"
@@ -58,12 +62,12 @@ const Register = ({ navigation }) => {
                 style={styles.input}
             />
 
-            <Button mode="contained" onPress={handleRegister} style={styles.button}>
-                Registrarse
+            <Button mode="contained" onPress={handleLogin} style={styles.button}>
+                Iniciar sesión
             </Button>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text style={styles.loginText}>¿Ya tienes cuenta? Inicia sesión</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Registro")}>
+                <Text style={styles.registerText}>¿No tienes cuenta? Regístrate</Text>
             </TouchableOpacity>
         </View>
     );
@@ -74,22 +78,20 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#6200ee", // Color de fondo morado vibrante
+        backgroundColor: "#f0f4f7", // Igual que HomeTwo
         padding: 20,
     },
     backButton: {
         position: "absolute",
         top: 40,
         left: 20,
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        padding: 10,
-        borderRadius: 50,
     },
     title: {
-        fontSize: 26,
+        fontSize: 24,
         fontWeight: "bold",
-        color: "white",
         marginBottom: 30,
+        color: "#4a90e2", // Azul del header de HomeTwo
+        fontStyle: "italic",
     },
     input: {
         width: "100%",
@@ -99,13 +101,13 @@ const styles = StyleSheet.create({
     button: {
         width: "100%",
         padding: 5,
-        backgroundColor: "#ff9800",
+        backgroundColor: "#4a90e2", // Botón azul como HomeTwo
     },
-    loginText: {
+    registerText: {
         marginTop: 20,
-        color: "white",
+        color: "#4a90e2",
         fontSize: 16,
     },
 });
 
-export default Register;
+export default Login;
