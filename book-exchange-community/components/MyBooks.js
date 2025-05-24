@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Carousel from 'react-native-reanimated-carousel';
@@ -8,14 +8,36 @@ import {getOwnBooks} from "../services/ServiceBooks";
 
 export default function MyBooks() {
     const [books, setBooks] = useState([]);
+    const {user, setLoading} = useContext(AppContext);
+
+
     const fetchBooks = async () => {
-        setBooks(await getOwnBooks());
+        setLoading(true);
+        const fetched = await getOwnBooks(user.uid);
+        setBooks(fetched);
+        setLoading(false);
     };
 
+    useEffect(() => {
+        if (!user?.uid) return;
+        const fetchOnce = async () => {
+            const fetched = await getOwnBooks(user.uid);
+            setBooks(fetched);
+        };
+        fetchBooks();
+    }, [user?.uid]);
+
     useFocusEffect(
-        React.useCallback(() => {
+        useCallback(() => {
+            if (!user?.uid) return;
+            const fetchOnFocus = async () => {
+                const fetched = await getOwnBooks(user.uid);
+                setBooks(fetched);
+            };
             fetchBooks();
-        }));
+        }, [user.uid])
+    );
+
 
 
     const {widthApp, heightApp} = useContext(AppContext);
@@ -70,7 +92,7 @@ export default function MyBooks() {
     } else {
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>Tus libros</Text>
+                <Text style={styles.text}>{"Tus libros " + user.displayName}</Text>
                 <Carousel
                     loop={false}
                     autoPlay={false}
