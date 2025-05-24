@@ -29,5 +29,4 @@ const NavigationTabs = () => {
     );
 };
 export default NavigationTabs;
-/* Parte de la navegacion de la aplicacion para volver de una pantalla
-a la anterior*/
+

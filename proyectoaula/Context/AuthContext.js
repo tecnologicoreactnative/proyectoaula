@@ -21,5 +21,3 @@ export const ProveedorAuth = ({ children }) => {
     );
 };
 
-/*Aqui se definen los contextos de autentificacion 
-permitiendo manejar los estados del usuario tanto incio como cierre*/

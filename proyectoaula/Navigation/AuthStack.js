@@ -14,5 +14,4 @@ const AuthStack = () => {
     );
 };
 export default AuthStack;
-/*Aqui se configura la navegacion en pila, teneniedo como 
-pantalla de incio el home*/
+

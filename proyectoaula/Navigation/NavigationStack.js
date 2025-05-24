@@ -65,5 +65,3 @@ const NavigationStack = () => {
 
 export default NavigationStack;
 
-/*Aqui manejamos la navegacion principal de las pantallas
-donde tambien se maneja como pila*/
