@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "954719278904",
+    "project_id": "crizmazo",
+    "storage_bucket": "crizmazo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954719278904:android:f4d5dd271072f6226753cd",
+        "android_client_info": {
+          "package_name": "Gestor.Citas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVNSKbqwNyU_-E7JqbMVUyKctNQQvhhwI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954719278904:android:3b477af716b0ac936753cd",
+        "android": {
+          "package": "com.gestor.miapp",
+          "googleServicesFile": "./google-services.json"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVNSKbqwNyU_-E7JqbMVUyKctNQQvhhwI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
