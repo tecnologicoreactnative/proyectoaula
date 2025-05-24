@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert

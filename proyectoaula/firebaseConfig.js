@@ -25,4 +25,3 @@ const db = getFirestore(app);
 const storage = getStorage(app); // ✅ Agregado correctamente
 
 export { auth, db, storage };
-

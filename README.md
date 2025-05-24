@@ -58,4 +58,3 @@ En este video te mostramos paso a paso cómo funciona la app, sus principales ca
 
 🔗 [Descargar APK desde Expo](https://expo.dev/accounts/bedoya123/projects/Aplicacion/builds/6e1c55c8-f933-46a3-84b6-ff9075659d01)
 
----
