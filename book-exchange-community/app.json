@@ -1,17 +1,22 @@
 {
   "expo": {
-    "name": "book-exchange-community",
+    "jsEngine": "jsc",
+    "name": "Swap Books",
     "slug": "book-exchange-community",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/Logo.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/Swap-Books.gif",
+      "image": "./assets/Swap-Books.png",
       "resizeMode": "contain",
       "backgroundColor": "#011F26"
     },
+    "plugins": [
+      "expo-dev-client",
+      "expo-notifications"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -23,11 +28,27 @@
         "foregroundImage": "./assets/Logo.png",
         "backgroundColor": "#011F26"
       },
+      "edgeToEdgeEnabled": true,
       "package": "com.anonymous.bookexchangecommunity",
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDiOXb60K1bLWf_DUZwVuBoemf1kZByQB8"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b0b12277-5bf1-44c8-86fb-83cfed0374ad"
+      }
+    },
+    "owner": "ecologist386"
   }
 }
